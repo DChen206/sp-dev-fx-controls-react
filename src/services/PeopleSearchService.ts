@@ -229,14 +229,15 @@ export default class SPPeopleSearchService {
               case 'User':
                 const accountName: string =  element.Description || "";
                 const email: string  =  element.EntityData?.Email || element.Description;
+                const jobTitle: string = element.EntityData?.Title || "";
                 return {
                   id: element.Key,
                   loginName: element.LoginName ? element.LoginName : element.Key,
                   imageUrl: this.generateUserPhotoLink(accountName),
                   imageInitials: this.getFullNameInitials(element.DisplayText),
                   text: element.DisplayText, // name
-                  secondaryText: email, // email
-                  tertiaryText: "", // status
+                  secondaryText: jobTitle != "" ? jobTitle + " | " + email : email, // email
+                  tertiaryText: email, // status
                   optionalText: "" // anything
                 } as IPeoplePickerUserItem;
               case 'SecGroup':
