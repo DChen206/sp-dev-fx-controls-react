@@ -38,6 +38,7 @@ import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/People
     showtooltip={true}
     required={true}
     disabled={true}
+    searchTextLimit={5}
     onChange={this._getPeoplePickerItems}
     showHiddenInUI={false}
     principalTypes={[PrincipalType.User]}
@@ -61,7 +62,7 @@ The People picker control can be configured with the following properties:
 | context | BaseComponentContext | yes | Context of the current web part. | |
 | titleText | string | no | Text to be displayed on the control | |
 | groupName | string | no | Group from which users are fetched. Leave it blank if need to filter all users. When both groupName and groupId specified groupName takes precedence. | _none_ |
-| groupId | number | no | Group from which users are fetched. Leave it blank if need to filter all users. When both groupId and groupName specified groupName takes precedence. | _none_ |
+| groupId | number \| string \| (string\|number)[] | no | Group from which users are fetched. Leave it blank if need to filter all users. When both groupId and groupName specified groupName takes precedence. If string is specified, Microsoft 365 Group is used. If array is used, fetch results from multiple groups | _none_ |
 | personSelectionLimit | number | no | Defines the limit of people that can be selected in the control | 1 |
 | required | boolean | no | Set if the control is required or not | false |
 | disabled | boolean | no | Set if the control is disabled or not | false |
@@ -78,9 +79,12 @@ The People picker control can be configured with the following properties:
 | webAbsoluteUrl | string | no | Specify the site URL on which you want to perform the user query call. If not provided, the people picker will perform a tenant wide people/group search. When provided it will search users/groups on the provided site. | |
 | principalTypes | PrincipalType[] | no | Define which type of data you want to retrieve: User, SharePoint groups, Security groups. Multiple are possible. | |
 | ensureUser | boolean | no | When ensure user property is true, it will return the local user ID on the current site when doing a tenant wide search. | false |
+| allowUnvalidated | boolean | no | When true, allow email addresses that have not been validated to be entered, effectively allowing any user. | false |
 | suggestionsLimit | number | no | Maximum number of suggestions to show in the full suggestion list. | 5 |
 | resolveDelay | number | no | Add delay to resolve and search users | 200 |
 | placeholder | string | no | Short text hint to display in empty picker |
+| styles | Partial<IBasePickerStyles> | no | Styles to apply on control |
+| searchTextLimit | number | no | Specifies the minimum character count needed to begin retrieving search results. | 2 |
 
 Enum `PrincipalType`
 
@@ -93,4 +97,13 @@ The `PrincipalType` enum can be used to specify the types of information you wan
 | SecurityGroup | 4 |
 | SharePointGroup | 8 |
 
+
+## MSGraph Permissions required
+
+This control requires the following scopes if groupId is of type String:
+
+at least : GroupMember.Read.All, Directory.Read.All
+
+
 ![](https://telemetry.sharepointpnp.com/sp-dev-fx-controls-react/wiki/controls/PeoplePicker)
+

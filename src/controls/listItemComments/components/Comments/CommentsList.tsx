@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useContext, useEffect, useRef } from "react";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
+import { Stack } from "@fluentui/react/lib/Stack";
 import { useSpAPI } from "../../hooks";
 import { EListItemCommentsStateTypes, ListItemCommentsStateContext } from "../ListItemCommentsStateProvider";
 import { useListItemCommentsStyles } from "./useListItemCommentsStyles";
@@ -9,7 +9,7 @@ import { getScrollPosition } from "../../utils/utils";
 import { IErrorInfo } from "../ErrorInfo/IErrorInfo";
 import { RenderError } from "./RenderError";
 import { RenderSpinner } from "./RenderSpinner";
-import { Text } from "office-ui-fabric-react/lib/Text";
+import { Text } from "@fluentui/react/lib/Text";
 import { AddComment } from "../AddComment/AddComment";
 import { ECommentAction } from "../../common/ECommentAction";
 import { IAddCommentPayload } from "../../models/IAddCommentPayload";
@@ -105,14 +105,14 @@ export const CommentsList: React.FunctionComponent = () => {
         (async () => {
           // Add new comment
           await _onAddComment(commentToAdd);
-        })();
+        })().then(() => { /* no-op; */}).catch(() => { /* no-op; */ });
         break;
       case ECommentAction.DELETE:
         (async () => {
           // delete comment
           const commentId = Number(selectedComment.id);
           await _onADeleteComment(commentId);
-        })();
+        })().then(() => { /* no-op; */}).catch(() => { /* no-op; */ });
         break;
       default:
         break;
@@ -122,7 +122,7 @@ export const CommentsList: React.FunctionComponent = () => {
   useEffect(() => {
     (async () => {
       await _loadComments();
-    })();
+    })().then(() => { /* no-op; */}).catch(() => { /* no-op; */ });
   }, [_loadComments]);
 
   const handleScroll = React.useCallback(async () => {

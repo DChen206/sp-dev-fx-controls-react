@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { BasePicker, IBasePickerProps, IInputProps, IPickerItemProps } from 'office-ui-fabric-react/lib/Pickers';
+import { BasePicker, IBasePickerProps, IInputProps, IPickerItemProps } from '@fluentui/react/lib/Pickers';
 import { IPickerTerm, IPickerTerms } from './ITermPicker';
 import SPTermStorePickerService from './../../services/SPTermStorePickerService';
 import styles from './TaxonomyPicker.module.scss';
 import { ITaxonomyPickerProps } from './ITaxonomyPicker';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 import * as strings from 'ControlStrings';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Icon } from '@fluentui/react/lib/Icon';
 import { ITermSet } from "../../services/ISPTermStorePickerService";
-import { Autofill } from 'office-ui-fabric-react/lib/components/Autofill/Autofill';
+import { Autofill } from '@fluentui/react/lib/components/Autofill/Autofill';
 import { LegacyRef, KeyboardEvent } from 'react';
 
 export class TermBasePicker extends BasePicker<IPickerTerm, IBasePickerProps<IPickerTerm>>
@@ -18,7 +18,7 @@ export class TermBasePicker extends BasePicker<IPickerTerm, IBasePickerProps<IPi
 
 export interface ITermPickerState {
   terms: IPickerTerms;
-  elRef?: LegacyRef<TermBasePicker> & LegacyRef<any>;
+  elRef?: LegacyRef<TermBasePicker> & LegacyRef<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface ITermPickerProps {
@@ -45,7 +45,7 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
   /**
    * Constructor method
    */
-  constructor(props: any) {
+  constructor(props: ITermPickerProps) {
     super(props);
     this.onRenderItem = this.onRenderItem.bind(this);
     this.onRenderSuggestionsItem = this.onRenderSuggestionsItem.bind(this);
@@ -61,10 +61,10 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
   /**
    * componentWillReceiveProps method
    */
-  public componentWillReceiveProps(nextProps: ITermPickerProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps: ITermPickerProps): void {
     // check to see if props is different to avoid re-rendering
-    let newKeys = nextProps.value.map(a => a.key);
-    let currentKeys = this.state.terms.map(a => a.key);
+    const newKeys = nextProps.value.map(a => a.key);
+    const currentKeys = this.state.terms.map(a => a.key);
     if (newKeys.sort().join(',') !== currentKeys.sort().join(',')) {
       this.setState({ terms: nextProps.value });
     }
@@ -73,7 +73,7 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
   /**
    * Renders the item in the picker
    */
-  protected onRenderItem(term: IPickerItemProps<IPickerTerm>) {
+  protected onRenderItem(term: IPickerItemProps<IPickerTerm>): JSX.Element {
     return (
       <div className={styles.pickedTermRoot}
            key={term.index}
@@ -95,11 +95,11 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
   /**
    * Renders the suggestions in the picker
    */
-  protected onRenderSuggestionsItem(term: IPickerTerm) {
+  protected onRenderSuggestionsItem(term: IPickerTerm): JSX.Element {
     let termParent = term.termSetName;
     let termTitle = `${term.name} [${term.termSetName}]`;
     if (term.path.indexOf(";") !== -1) {
-      let splitPath = term.path.split(";");
+      const splitPath = term.path.split(";");
       termParent = splitPath[splitPath.length - 2];
       splitPath.pop();
       termTitle = `${term.name} [${term.termSetName}:${splitPath.join(':')}]`;
@@ -119,11 +119,10 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
     if (filterText !== "") {
       const {
         termPickerHostProps,
-        context,
         isTermSetSelectable
       } = this.props;
 
-      let terms: IPickerTerm[] = await this.termsService.searchTermsByName(filterText);
+      const terms: IPickerTerm[] = await this.termsService.searchTermsByName(filterText);
       // Check if the termset can be selected
       if (isTermSetSelectable && !termPickerHostProps.anchorId) {
         // Retrieve the current termset
@@ -155,7 +154,9 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
             if (disableChildrenOfDisabledParents) {
               // Check if terms were already retrieved
               if (!this.allTerms) {
-                this.allTerms = await this.termsService.getAllTerms(this.props.termPickerHostProps.termsetNameOrID);
+                this.allTerms = await this.termsService.getAllTerms(this.props.termPickerHostProps.termsetNameOrID,
+                  this.props.termPickerHostProps.hideDeprecatedTags,
+                  this.props.termPickerHostProps.hideTagsNotAvailableForTagging);
               }
 
               // Check if there are terms retrieved
@@ -191,7 +192,7 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
   /**
    * gets the text from an item
    */
-  private onGetTextFromItem(item: any): any {
+  private onGetTextFromItem(item: any): any { // eslint-disable-line @typescript-eslint/no-explicit-any
     return item.name;
   }
 
@@ -214,12 +215,12 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
       terms
     } = this.state;
 
-    const clearDisplayValue = () => {
+    const clearDisplayValue = (): void => {
       const picker = this.state.elRef as unknown as TermBasePicker;
-      const autoFill = picker?.['input']?.current as Autofill;
+      const autoFill = picker?.['input']?.current as Autofill; // eslint-disable-line dot-notation
       if (autoFill) {
-        autoFill['_value'] = '';
-        autoFill.setState({ displayValue: '' });
+        autoFill['_value'] = ''; // eslint-disable-line dot-notation
+        autoFill.setState({ inputValue: '' });
       } else {
         throw new Error(`TermPicker.TermBasePicker.render.clearDisplayValue no autoFill to reset displayValue`);
       }
@@ -229,8 +230,8 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
 
     if(onNewTerm) {
       inputProps.onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e && e.key === 'Enter' && (! (e.ctrlKey || e.altKey || e.shiftKey)) && e.target?.['value'] ) {
-          onNewTerm(e.target['value']);
+        if (e && e.key === 'Enter' && (! (e.ctrlKey || e.altKey || e.shiftKey)) && e.target?.['value'] ) { // eslint-disable-line dot-notation
+          onNewTerm(e.target['value']); // eslint-disable-line dot-notation
           clearDisplayValue();
         }
       };
@@ -243,7 +244,7 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
             if (!this.state.elRef) {
               this.setState({ elRef });
             }
-          }}        
+          }}
           disabled={disabled}
           onResolveSuggestions={this.onFilterChanged}
           onRenderSuggestionsItem={this.onRenderSuggestionsItem}

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Link } from 'office-ui-fabric-react/lib/Link';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Link } from '@fluentui/react/lib/Link';
 
 import { FieldBaseTextRenderer } from '../fieldBaseTextRenderer/FieldBaseTextRenderer';
 import { IFieldRendererProps } from '../fieldCommon/IFieldRendererProps';
@@ -28,7 +28,7 @@ export interface IFieldTitleRendererProps extends IFieldRendererProps {
      */
     id?: number;
     /**
-     * custom title click event handler. If not set Display form for the item will be displaed
+     * custom title click event handler. If not set Display form for the item will be displayed
      */
     onClick?: (args: IFieldTitleClickEventArgs) => void;
 }
@@ -75,7 +75,10 @@ export class FieldTitleRenderer extends React.Component<IFieldTitleRendererProps
 
     private _onClick(): void {
         if (this.props.onClick) {
-            const args: IFieldTitleClickEventArgs = this.props as IFieldTitleClickEventArgs;
+            const args: IFieldTitleClickEventArgs = {
+                listId: this.props.listId,
+                id: this.props.id.toString()
+            };
             this.props.onClick(args);
             return;
         }

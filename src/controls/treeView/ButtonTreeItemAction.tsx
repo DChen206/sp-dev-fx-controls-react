@@ -1,7 +1,7 @@
+import { CommandBarButton } from '@fluentui/react/lib/Button';
+import { IIconProps } from '@fluentui/react/lib/Icon';
 import * as React from 'react';
-import { CommandBarButton } from 'office-ui-fabric-react/lib/Button';
-import { IIconProps } from 'office-ui-fabric-react/lib/Icon';
-import { ITreeItemAction, IConcreteTreeItemActionProps } from './ITreeItemActions';
+import { IConcreteTreeItemActionProps, ITreeItemAction } from './ITreeItemActions';
 import styles from './TreeView.module.scss';
 
 /**
@@ -12,7 +12,7 @@ export default class ButtonTreeItemAction extends React.Component<IConcreteTreeI
   /**
    * componentWillMount lifecycle hook
    */
-  public componentWillMount(): void {
+  public UNSAFE_componentWillMount(): void {
     this.checkForImmediateInvocations();
   }
 
@@ -20,35 +20,29 @@ export default class ButtonTreeItemAction extends React.Component<IConcreteTreeI
    * Prepares the command bar button
    */
   private prepareCommandBarButton = (treeItemAction: ITreeItemAction): { name: string, text: string, iconProps: IIconProps, btnTitle: string } => {
-    let name: string = treeItemAction.title;
-    let text: string = treeItemAction.title;
-    let iconProps: IIconProps = treeItemAction.iconProps;
-    let btnTitle: string = treeItemAction.title;
+    const name: string = treeItemAction.title;
+    const text: string = treeItemAction.title;
+    const iconProps: IIconProps = treeItemAction.iconProps;
+    const btnTitle: string = treeItemAction.title;
 
     return { name, text, iconProps, btnTitle };
   }
 
   /**
-   * Gets the action button styling
-   */
-  private getTreeItemActionButtonStyle = (treeItemAction: ITreeItemAction): React.CSSProperties => {
-    let result: React.CSSProperties = {
-      backgroundColor: "transparent",
-      height: "32px"
-    };
-
-    return result;
-  }
-
-  /**
    * Check if there are action to immediatly invoke
    */
-  private checkForImmediateInvocations() {
+  private checkForImmediateInvocations(): void {
     const { treeItemActions } = this.props;
 
     for (const action of treeItemActions) {
       if (action.invokeActionOnRender) {
-        this.onActionExecute(action);
+        this.onActionExecute(action)
+        .then(() => {
+          // no-op;
+        })
+        .catch(() => {
+          // no-op;
+        });
       }
     }
   }
@@ -56,7 +50,7 @@ export default class ButtonTreeItemAction extends React.Component<IConcreteTreeI
   /**
    * On action execution
    */
-  private onActionExecute = async (treeItemAction: ITreeItemAction) => {
+  private onActionExecute = async (treeItemAction: ITreeItemAction): Promise<void> => {
     await treeItemAction.actionCallback(this.props.treeItem);
     this.props.treeItemActionCallback();
   }
@@ -84,17 +78,26 @@ export default class ButtonTreeItemAction extends React.Component<IConcreteTreeI
               treeItemAction.hidden ? (
                 null
               ) : (
-                  <div>
-                    <CommandBarButton split={true}
-                      onClick={() => { this.onActionExecute(treeItemAction); }}
-                      iconProps={iconProps}
-                      text={text}
-                      title={btnTitle}
-                      name={name}
-                      key={treeItem.key}
-                      className={styles.actionButton} />
-                  </div>
-                )
+                <div>
+                  <CommandBarButton split={true}
+                    onClick={() => {
+                      this.onActionExecute(treeItemAction)
+                      .then(() => {
+                        // no-op;
+                      })
+                      .catch(() => {
+                        // no-op;
+                      });
+                    }}
+                    iconProps={iconProps}
+                    text={text}
+                    title={btnTitle}
+                    name={name}
+                    key={treeItem.key}
+                    className={styles.actionButton}
+                    theme={this.props.theme} />
+                </div>
+              )
             );
           })
         }

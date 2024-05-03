@@ -3,21 +3,21 @@ import { ITeamProps } from "./ITeamProps";
 import { PersonCardInteraction } from "@microsoft/mgt-spfx";
 import { People } from "@microsoft/mgt-react/dist/es6/spfx";
 import { getMyTeamsStyles } from "../../MyTeamsStyles";
-import { CommandButton } from "office-ui-fabric-react/lib/Button";
-import { FontIcon } from "office-ui-fabric-react/lib/Icon";
-import { Text } from "office-ui-fabric-react/lib/Text";
-import { Stack, StackItem } from "office-ui-fabric-react/lib/Stack";
+import { CommandButton } from "@fluentui/react/lib/Button";
+import { FontIcon } from "@fluentui/react/lib/Icon";
+import { Text } from "@fluentui/react/lib/Text";
+import { Stack, StackItem } from "@fluentui/react/lib/Stack";
 import {
   IContextualMenuItem,
   IContextualMenuItemProps,
   ContextualMenuItemType,
-} from "office-ui-fabric-react/lib/ContextualMenu";
+} from "@fluentui/react/lib/ContextualMenu";
 
 import { useTeams } from "../../../../hooks";
 import { ITeamMenber } from "../../../../common/model/ITeamMember";
 import { EMembershipType } from "../../../../common/model/EMembershipType";
 import { IShowMessageProps, ShowMessage } from "../ShowMessage";
-import { MessageBarType } from "office-ui-fabric-react/lib/MessageBar";
+import { MessageBarType } from "@fluentui/react/lib/MessageBar";
 import strings from "ControlStrings";
 import { ITeamState } from "./ITeamState";
 import { teamsReducer } from "./TeamReducer";
@@ -55,9 +55,12 @@ export const Team: React.FunctionComponent<ITeamProps> = (
       ev: React.MouseEvent<HTMLElement, MouseEvent>,
       item: IContextualMenuItem
     ) => {
-      onSelectedChannel
-        ? onSelectedChannel(item.data.teamId, item.key)
-        : window.open(item.data.webUrl);
+      if (onSelectedChannel) {
+        onSelectedChannel(item.data.teamId, item.key)
+      }
+      else {
+        window.open(item.data.webUrl);
+      }
     },
     [onSelectedChannel]
   );
@@ -105,7 +108,7 @@ export const Team: React.FunctionComponent<ITeamProps> = (
 
         const _members: ITeamMenber[] = await getTeamMembers(team.id);
         const teamOwners: ITeamMenber[] = await getTeamOwners(team.id);
-        let _renderOwners: string[] = [];
+        const _renderOwners: string[] = [];
         for (const teamOwner of teamOwners) {
           _renderOwners.push(teamOwner.displayName);
         }
@@ -114,10 +117,9 @@ export const Team: React.FunctionComponent<ITeamProps> = (
           payload: _renderOwners.join(","),
         });
 
-        let publicChannels: IContextualMenuItem[] = [];
-        let privateChannels: IContextualMenuItem[] = [];
-        let _renderMembers: string[] = [];
-        let allChannels: IContextualMenuItem[];
+        const publicChannels: IContextualMenuItem[] = [];
+        const privateChannels: IContextualMenuItem[] = [];
+        const _renderMembers: string[] = [];
 
         for (const teamMember of _members) {
           _renderMembers.push(teamMember.userId);
@@ -176,7 +178,7 @@ export const Team: React.FunctionComponent<ITeamProps> = (
           iconProps: { iconName: "SecurityGroup" },
         });
 
-        allChannels = [...publicChannels, ...privateChannels];
+        const allChannels = [...publicChannels, ...privateChannels];
 
         dispatch({
           type: ETeamTypes.SET_TEAM_CHANNELS,
@@ -210,14 +212,13 @@ export const Team: React.FunctionComponent<ITeamProps> = (
           payload: true,
         });
       }
-    })();
+    })().then(() => { /* no-op; */ }).catch(() => { /* no-op; */ });
   }, []);
 
   const {
     teamMembers,
     teamsOwners,
     hasError,
-    isLoading,
     channelsMenu,
     message,
   } = state;
@@ -269,7 +270,7 @@ export const Team: React.FunctionComponent<ITeamProps> = (
                     ? PersonCardInteraction.hover
                     : PersonCardInteraction.none
                 }
-              ></People>
+              />
               <CommandButton
                 iconProps={{ iconName: "PageList" }}
                 text={"channel"}

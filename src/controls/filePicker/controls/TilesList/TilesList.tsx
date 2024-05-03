@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styles from './TilesList.module.scss';
-import { SelectionZone } from 'office-ui-fabric-react/lib/Selection';
+import { SelectionZone } from '@fluentui/react/lib/Selection';
 import { IFile } from '../../../../services/FileBrowserService.types';
-import { List, IPageProps } from 'office-ui-fabric-react/lib/List';
-import { FocusZone } from 'office-ui-fabric-react/lib/FocusZone';
-import { IRenderFunction, IRectangle, css } from 'office-ui-fabric-react/lib/Utilities';
+import { List, IPageProps } from '@fluentui/react/lib/List';
+import { FocusZone } from '@fluentui/react/lib/FocusZone';
+import { IRenderFunction, IRectangle, css } from '@fluentui/react/lib/Utilities';
 import { FolderTile } from '../FolderTile';
 import { DocumentTile } from '../DocumentTile';
 import { ITilesListProps } from './ITilesListProps';
+import { findIndex } from '@microsoft/sp-lodash-subset';
 
 /**
  * Rows per page
@@ -39,8 +40,6 @@ const TILE_HORZ_PADDING: number = 32;
  */
 const BOTTOM_MARGIN: number = 36;
 
-const LAYOUT_STORAGE_KEY: string = 'comparerOneDriveLayout';
-
 
 export class TilesList extends React.Component<ITilesListProps> {
   private _columnCount: number;
@@ -53,25 +52,32 @@ export class TilesList extends React.Component<ITilesListProps> {
     super(props);
   }
 
-  public componentDidUpdate(prevProps: ITilesListProps) {
-    if (this.props.filePickerResult != prevProps.filePickerResult) {
+  public componentDidUpdate(prevProps: ITilesListProps): void {
+    if ((this.props.filePickerResults !== prevProps.filePickerResults) || (this._pageWidth === -1)) {
       this._listElem.forceUpdate();
+    }
+  }
+
+  public componentDidMount(): void {
+    if (this._pageWidth === -1) {
+      this.forceUpdate();
     }
   }
 
   public render(): React.ReactElement<ITilesListProps> {
     return (
-      <SelectionZone selection={this.props.selection} onItemInvoked={(item: IFile) => {this._handleItemInvoked(item);}}>
+      <SelectionZone selection={this.props.selection} onItemInvoked={(item: IFile) => { this._handleItemInvoked(item); }}>
         <FocusZone>
-          <List
-            ref={(e:any) => { this._listElem = e; }}
-            className={styles.folderList}
-            items={this.props.items}
-
-            getItemCountForPage={this._getItemCountForPage}
-            getPageHeight={this._getPageHeight}
-            onRenderPage={(pageProps: IPageProps, defaultRender?: IRenderFunction<IPageProps>) => this._onRenderPage(pageProps, defaultRender)}
-          />
+          <div data-is-scrollable>
+            <List
+              ref={(e: List) => { this._listElem = e; }}
+              className={styles.folderList}
+              items={this.props.items}
+              getItemCountForPage={this._getItemCountForPage}
+              getPageHeight={this._getPageHeight}
+              onRenderPage={(pageProps: IPageProps, defaultRender?: IRenderFunction<IPageProps>) => this._onRenderPage(pageProps, defaultRender)}
+            />
+          </div>
         </FocusZone>
       </SelectionZone>
     );
@@ -80,25 +86,32 @@ export class TilesList extends React.Component<ITilesListProps> {
   /**
   * Gets called what a file is selected.
   */
- private _handleItemInvoked = (item: IFile) => {
-  // If a file is selected, open the library
-  if (item.isFolder) {
-    this.props.onFolderOpen(item);
-  } else {
-    // Otherwise, remember it was selected
-    this.props.onFileSelected(item);
+  private _handleItemInvoked = (item: IFile): void => {
+    // If a file is selected, open the library
+    if (item.isFolder) {
+      this.props.onFolderOpen(item);
+    } else {
+      // Otherwise, remember it was selected
+      this.props.onFileSelected(item);
+    }
   }
-}
 
   /**
     * Calculates how many items there should be in the page
     */
-   private _getItemCountForPage = (itemIndex: number, surfaceRect: IRectangle): number => {
+  private _getItemCountForPage = (itemIndex: number, surfaceRect: IRectangle): number => {
     if (itemIndex === 0) {
-      this._columnCount = Math.ceil(surfaceRect.width / MAX_ROW_HEIGHT);
-      this._columnWidth = Math.floor(surfaceRect.width / this._columnCount);
+      if (surfaceRect.width === 0) {
+        //surfaceRect.width is 0 on load of this component, so it won't render properly.
+        //setting _pageWidth to -1 will re-render the entire component so surfaceRect.width will be returned correctly
+        this._pageWidth = -1;
+      } else {
+        this._columnCount = Math.ceil(surfaceRect.width / MAX_ROW_HEIGHT);
+        this._columnWidth = Math.floor(surfaceRect.width / this._columnCount);
+        this._pageWidth = surfaceRect.width;
+      }
+
       this._rowHeight = this._columnWidth;
-      this._pageWidth = surfaceRect.width;
     }
 
     // Get the list of items
@@ -166,15 +179,17 @@ export class TilesList extends React.Component<ITilesListProps> {
       this.props.onNextPageDataRequest();
       return null;
     }
-    let isSelected: boolean = this.props.filePickerResult && item.absoluteUrl == this.props.filePickerResult.fileAbsoluteUrl;
-
+    //If List component have more than 1 page, it starts to index items from 0,
+    //but for Selection index should be unique
+    const itemIndex = findIndex(this.props.items, item);
+    const isSelected: boolean = this.props.filePickerResults?.filter(x => x.fileAbsoluteUrl === item.absoluteUrl).length > 0;
     // I know this is a lot of divs and spans inside of each other, but my
     // goal was to mimic the HTML and style of the out-of-the-box file picker
     // to the best of my ability.
     return (
       <div
         className={styles.listCell}
-        data-item-index={index}
+        data-item-index={itemIndex}
         style={{
           flexBasis: this._columnWidth,
           maxWidth: this._columnWidth,
@@ -195,7 +210,7 @@ export class TilesList extends React.Component<ITilesListProps> {
               item.isFolder ?
                 <FolderTile
                   item={item}
-                  index={index}
+                  index={itemIndex}
                   isSelected={isSelected}
                   pageWidth={this._pageWidth}
                   tileDimensions={{
@@ -204,11 +219,11 @@ export class TilesList extends React.Component<ITilesListProps> {
                   }}
                   onItemInvoked={(itemInvoked: IFile) => this._handleItemInvoked(itemInvoked)}
                 />
-              :
+                :
                 <DocumentTile
                   fileBroserService={this.props.fileBrowserService}
                   item={item}
-                  index={index}
+                  index={itemIndex}
                   isSelected={isSelected}
                   pageWidth={this._pageWidth}
                   tileDimensions={{
@@ -217,7 +232,7 @@ export class TilesList extends React.Component<ITilesListProps> {
                   }}
                   onItemInvoked={(itemInvoked: IFile) => this._handleItemInvoked(itemInvoked)}
                 />
-              }
+            }
           </div>
         </div>
       </div>

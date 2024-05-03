@@ -3,7 +3,7 @@ import { IAccessibleChartTableState, IAccessibleChartTableProps } from './Access
 import styles from './ChartControl.module.scss';
 import { ChartDataSets } from 'chart.js';
 import { Guid } from '@microsoft/sp-core-library';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
+import { css } from '@fluentui/react/lib/Utilities';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 export class AccessibleChartTable extends React.Component<IAccessibleChartTableProps, IAccessibleChartTableState> {
@@ -94,7 +94,7 @@ export class AccessibleChartTable extends React.Component<IAccessibleChartTableP
     // Generate the Y header row
     const yHeaderRow: JSX.Element = yAxisLabel
       && <tr key={`yHeader-${Guid.newGuid().toString()}`}>
-        <th></th>
+        <th />
         <th colSpan={datasets.length}>{escape(yAxisLabel)}</th>
       </tr>;
 

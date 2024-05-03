@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Icon } from '@fluentui/react/lib/Icon';
 import { IFieldRendererProps } from '../fieldCommon/IFieldRendererProps';
 import * as telemetry from '../../../common/telemetry';
 
@@ -40,7 +40,7 @@ export class FieldAttachmentsRenderer extends React.Component<IFieldAttachmentsR
     public render(): JSX.Element {
         return (
             <div className={css(this.props.className, styles.container, styles.fabricIcon)} style={this.props.cssProps}>
-                {this.props.count && <Icon iconName={'Attach'}></Icon>}
+                {this.props.count && <Icon iconName={'Attach'} />}
             </div>
         );
     }

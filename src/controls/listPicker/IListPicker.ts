@@ -1,6 +1,8 @@
+import { IDropdownOption } from "@fluentui/react/lib/Dropdown";
+
+import { BaseComponentContext } from "@microsoft/sp-component-base";
+
 import { LibsOrderBy } from "../../services/ISPService";
-import { BaseComponentContext } from '@microsoft/sp-component-base';
-import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 
 export interface IListPickerProps {
   /**
@@ -18,7 +20,7 @@ export interface IListPickerProps {
   /**
   * The SharePoint BaseTemplate to filter the list options by
   */
-  baseTemplate?: number;
+  baseTemplate?: number | number[];
   /**
   * Whether or not to include hidden lists. Default is true
   */

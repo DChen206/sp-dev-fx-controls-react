@@ -1,11 +1,27 @@
 import * as React from 'react';
-import { ISiteBreadcrumbProps, ISiteBreadcrumbState, IWebInfo } from './ISiteBreadcrumb';
-import { Breadcrumb, IBreadcrumbItem } from 'office-ui-fabric-react/lib/Breadcrumb';
-import { SPHttpClient, HttpClientResponse } from '@microsoft/sp-http';
-import styles from './SiteBreadcrumb.module.scss';
+
 import * as strings from 'ControlStrings';
-import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
+import {
+  Breadcrumb,
+  IBreadcrumbItem,
+} from '@fluentui/react/lib/Breadcrumb';
+
+import {
+  Environment,
+  EnvironmentType,
+} from '@microsoft/sp-core-library';
+import {
+  HttpClientResponse,
+  SPHttpClient,
+} from '@microsoft/sp-http';
+
 import * as telemetry from '../../common/telemetry';
+import {
+  ISiteBreadcrumbProps,
+  ISiteBreadcrumbState,
+  IWebInfo,
+} from './ISiteBreadcrumb';
+import styles from './SiteBreadcrumb.module.scss';
 
 /**
  * Site breadcrumb component
@@ -30,7 +46,7 @@ export class SiteBreadcrumb extends React.Component<ISiteBreadcrumbProps, ISiteB
   /**
    * React component lifecycle hook, runs after render
    */
-  public componentDidMount() {
+  public componentDidMount(): void {
     // Start generating the links for the breadcrumb
     this._generateLinks();
   }
@@ -38,7 +54,7 @@ export class SiteBreadcrumb extends React.Component<ISiteBreadcrumbProps, ISiteB
   /**
    * Start the link generation for the breadcrumb
    */
-  private _generateLinks() {
+  private _generateLinks(): void {
     // Add the current site to the links list
     this._linkItems.push({
       text: this.props.context.pageContext.web.title,
@@ -76,7 +92,7 @@ export class SiteBreadcrumb extends React.Component<ISiteBreadcrumbProps, ISiteB
    * Retrieve the parent web URLs
    * @param webUrl Current URL of the web to process
    */
-  private _getParentWeb(webUrl: string) {
+  private _getParentWeb(webUrl: string): void {
     // Retrieve the parent web info
     const apiUrl = `${webUrl}/_api/web/parentweb?$select=Id,Title,ServerRelativeUrl`;
     this.props.context.spHttpClient.get(apiUrl, SPHttpClient.configurations.v1)
@@ -110,13 +126,16 @@ export class SiteBreadcrumb extends React.Component<ISiteBreadcrumbProps, ISiteB
           // Set the current breadcrumb data which is already retrieved
           this._setBreadcrumbData();
         }
+      })
+      .catch(() => {
+        // no-op;
       });
   }
 
   /**
    * Set the current breadcrumb data
    */
-  private _setBreadcrumbData() {
+  private _setBreadcrumbData(): void {
     this.setState({
       breadcrumbItems: this._linkItems
     });
@@ -131,7 +150,9 @@ export class SiteBreadcrumb extends React.Component<ISiteBreadcrumbProps, ISiteB
         <Breadcrumb
           items={this.state.breadcrumbItems}
           ariaLabel={strings.SiteBreadcrumbLabel}
-          className={styles.breadcrumbLinks} />
+          className={styles.breadcrumbLinks}
+
+          />
       </div >
     );
   }

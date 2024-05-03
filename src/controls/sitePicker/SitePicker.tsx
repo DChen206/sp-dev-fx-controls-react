@@ -1,17 +1,35 @@
-import { Async } from '@uifabric/utilities/lib/Async';
+import * as React from 'react';
+
 import findIndex from 'lodash/findIndex';
 import orderBy from 'lodash/orderBy';
-import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
-import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { ISelectableOption, SelectableOptionMenuItemType } from 'office-ui-fabric-react/lib/utilities/selectableOption/SelectableOption.types';
-import * as React from 'react';
+import {
+  Dropdown,
+  IDropdownOption,
+} from '@fluentui/react/lib/Dropdown';
+import { SearchBox } from '@fluentui/react/lib/SearchBox';
+import {
+  Spinner,
+  SpinnerSize,
+} from '@fluentui/react/lib/Spinner';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
+import {
+  ISelectableOption,
+  SelectableOptionMenuItemType,
+} from '@fluentui/react/lib/utilities/selectableOption/SelectableOption.types';
+
+import { Async } from '@uifabric/utilities/lib/Async';
 
 import * as telemetry from '../../common/telemetry';
 import { toRelativeUrl } from '../../common/utilities/GeneralHelper';
-import { getAllSites, getHubSites } from '../../services/SPSitesService';
-import { ISite, ISitePickerProps } from './ISitePicker';
+import {
+  getAllSites,
+  getAssociatedSites,
+  getHubSites,
+} from '../../services/SPSitesService';
+import {
+  ISite,
+  ISitePickerProps,
+} from './ISitePicker';
 
 const styles = mergeStyleSets({
   loadingSpinnerContainer: {
@@ -71,7 +89,10 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
     searchPlaceholder,
     deferredSearchTime,
     className,
-    selectedSites
+    selectedSites,
+    trimDuplicates,
+    additionalQuery,
+    hubsiteId
   } = props;
 
   const [isLoading, setIsLoading] = React.useState<boolean>();
@@ -101,15 +122,15 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
       if (existingIndex >= 0) {
         newSelectedSites.splice(existingIndex, 1);
       }
-      else {
+      else if (item.data) {
         newSelectedSites.push({
-          ...item.data!
+          ...item.data
         });
       }
     }
-    else {
+    else if (item.data) {
       newSelectedSites = [{
-        ...item.data!
+        ...item.data
       }];
     }
 
@@ -141,7 +162,7 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
       });
     }
 
-    const selectedSitesIds: string[] = sites ? sites.map(s => s.url!) : [];
+    const selectedSitesIds: string[] = sites ? sites.map(s => s.url) : [];
 
     if (filteredSites) {
       filteredSites.forEach(s => {
@@ -186,7 +207,7 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
     return <div className={styles.siteOption}>
       <div className={styles.siteOptionContent}>
         <span className={styles.siteOptionTitle}>{option.text}</span>
-        <span className={styles.siteOptionUrl}>{toRelativeUrl(option.data!.url)}</span>
+        <span className={styles.siteOptionUrl}>{toRelativeUrl(option.data ? option.data.url : '')}</span>
       </div>
     </div>;
   };
@@ -231,17 +252,27 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
     setFilteredSites([]);
 
     let promise: Promise<ISite[]>;
-    if (mode === 'hub') {
-      promise = getHubSites(context);
-    }
-    else {
-      promise = getAllSites(context, mode !== 'site', limitToCurrentSiteCollection);
+    switch (mode) {
+      case 'hub':
+        promise = getHubSites(context);
+        break;
+
+      case 'associatedsites':
+        promise = getAssociatedSites(context, trimDuplicates === true, hubsiteId);
+        break;
+
+      default:
+        promise = getAllSites(context, mode !== 'site', limitToCurrentSiteCollection, trimDuplicates === true, additionalQuery);
+        break;
     }
 
     promise.then(newSites => {
       const copy = orderBy(newSites, [propOrderBy || 'title'], [isDesc ? 'desc' : 'asc']);
       setAllSites(copy);
       setIsLoading(false);
+    })
+    .catch(() => {
+      // no-op;
     });
 
   }, [context, isLoading, mode, limitToCurrentSiteCollection]);
@@ -278,6 +309,7 @@ export const SitePicker: React.FunctionComponent<ISitePickerProps> = (props: Rea
         onChange={onSelectionChange}
         notifyOnReselect={true}
         className={className}
+        styles={props.styles}
       />
     </>
   );

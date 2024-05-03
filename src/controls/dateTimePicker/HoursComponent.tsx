@@ -2,9 +2,9 @@ import * as strings from 'ControlStrings';
 import * as React from 'react';
 import { IHoursComponentProps } from './ITimeComponentProps';
 import { TimeConvention } from './DateTimeConventions';
-import { MaskedTextField } from 'office-ui-fabric-react/lib/TextField';
+import { MaskedTextField } from '@fluentui/react/lib/TextField';
 import { TimeHelper } from './TimeHelper';
-import { IDropdownOption, Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
+import { IDropdownOption, Dropdown } from '@fluentui/react/lib/Dropdown';
 import { TimeDisplayControlType } from './TimeDisplayControlType';
 
 /**
@@ -82,22 +82,11 @@ export default class HoursComponent extends React.Component<IHoursComponentProps
     }
   }
 
-  private _initHoursOptions() {
+  private _initHoursOptions(): void {
     const amDesignator = 'AM';
     const pmDesignator = 'PM';
 
-    const {
-      value,
-      timeConvention
-    } = this.props;
-    /*if (strings.AMDesignator) {
-      amDesignator = ` ${strings.AMDesignator}`;
-    }
-    if (strings.PMDesignator) {
-      pmDesignator = ` ${strings.PMDesignator}`;
-    }*/
-
-    let hours: IDropdownOption[] = [];
+    const hours: IDropdownOption[] = [];
     for (let i = 0; i < 24; i++) {
       let digit: string;
       if (this.props.timeConvention === TimeConvention.Hours24) {

@@ -1,6 +1,6 @@
-import { IconButton } from "office-ui-fabric-react/lib/Button";
-import { DocumentCard, DocumentCardDetails } from "office-ui-fabric-react/lib/DocumentCard";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
+import { IconButton } from "@fluentui/react/lib/Button";
+import { DocumentCard, DocumentCardDetails } from "@fluentui/react/lib/DocumentCard";
+import { Stack } from "@fluentui/react/lib/Stack";
 import * as React from "react";
 import { useCallback } from "react";
 import { useContext } from "react";
@@ -11,22 +11,23 @@ import { IComment } from "./IComment";
 import { RenderSpinner } from "./RenderSpinner";
 import { useListItemCommentsStyles } from "./useListItemCommentsStyles";
 import { useBoolean } from "@fluentui/react-hooks";
-import { List } from "office-ui-fabric-react/lib/List";
-import { ECommentAction } from "../..";
+import { List } from "@fluentui/react/lib/List";
+import { AppContext, ECommentAction } from "../..";
 
-export interface IRenderCommentsProps {}
+export interface IRenderCommentsProps { }
 
 export const RenderComments: React.FunctionComponent<IRenderCommentsProps> = () => {
+  const { highlightedCommentId } = useContext(AppContext);
   const { listItemCommentsState, setlistItemCommentsState } = useContext(ListItemCommentsStateContext);
-  const { documentCardStyles, itemContainerStyles, deleteButtonContainerStyles } = useListItemCommentsStyles();
-  const { comments, isLoading, selectedComment } = listItemCommentsState;
+  const { documentCardStyles,documentCardHighlightedStyles, itemContainerStyles, deleteButtonContainerStyles } = useListItemCommentsStyles();
+  const { comments, isLoading } = listItemCommentsState;
 
   const [hideDialog, { toggle: setHideDialog }] = useBoolean(true);
 
   const onRenderCell = useCallback(
     (comment: IComment, index: number): JSX.Element => {
       return (
-        <DocumentCard styles={documentCardStyles} key={index}>
+        <DocumentCard styles={ highlightedCommentId && comment.id===highlightedCommentId? documentCardHighlightedStyles : documentCardStyles} key={index}>
           <Stack horizontal horizontalAlign="end" styles={deleteButtonContainerStyles}>
             <IconButton
               iconProps={{ iconName: "Delete" }}
@@ -38,7 +39,7 @@ export const RenderComments: React.FunctionComponent<IRenderCommentsProps> = () 
                 });
                 setHideDialog();
               }}
-            ></IconButton>
+            />
           </Stack>
           <DocumentCardDetails styles={{ root: { paddingTop: 15 } }}>
             <Stack

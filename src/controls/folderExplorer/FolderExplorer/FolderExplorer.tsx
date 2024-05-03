@@ -1,14 +1,15 @@
 import * as React from 'react';
 import styles from './FolderExplorer.module.scss';
 import * as strings from 'ControlStrings';
-import { Icon } from "office-ui-fabric-react/lib/Icon";
+import { Icon } from "@fluentui/react/lib/Icon";
 import { IFolderExplorerProps, IFolderExplorerState } from '.';
 import { FolderExplorerService } from '../../../services/FolderExplorerService';
 import { IFolder, IFolderExplorerService } from '../../../services/IFolderExplorerService';
 import { NewFolder } from "../NewFolder";
-import { Breadcrumb, IBreadcrumbItem } from "office-ui-fabric-react/lib/Breadcrumb";
+import { Breadcrumb, IBreadcrumbItem } from "@fluentui/react/lib/Breadcrumb";
 import * as telemetry from '../../../common/telemetry';
-import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
+import { SearchBox } from '@fluentui/react/lib/SearchBox';
+import { IFileInfo } from '@pnp/sp/files';
 
 
 export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolderExplorerState> {
@@ -16,6 +17,7 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
   private _spService: IFolderExplorerService;
   private _allLibraries: IFolder[] = [];
   private _allFolders: IFolder[] = [];
+  private _allFiles: IFileInfo[] = [];
 
   constructor(props: IFolderExplorerProps) {
     super(props);
@@ -27,11 +29,12 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
     this.state = {
       foldersLoading: false,
       folders: [],
+      files: [],
       selectedFolder: null,
     };
   }
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const targetFolder = this.props.defaultFolder ? this.props.defaultFolder : this.props.rootFolder;
     const siteAbsoluteUrl: string = this.props.siteAbsoluteUrl || this.props.context.pageContext.web.absoluteUrl;
     // get libraries if site absolute url does not end with folder relative url - if not retrieving document libraries by default
@@ -64,8 +67,8 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
             <div>
               {this.state.folders.map((folder) => {
                 return (
-                  <div className={styles.libraryItem} onClick={() => { this._getFolders(folder); }}>
-                    <Icon iconName="FabricFolder" className={styles.folderIcon} />
+                  <div className={styles.libraryItem} key={folder.ServerRelativeUrl} onClick={() => { this._getFolders(folder).then(() => { /* no-op; */ }).catch(() => { /* no-op; */ }); }}>
+                    <Icon iconName="FabricFolder" className={styles.icon} />
                     {folder.Name}
                   </div>
                 );
@@ -77,7 +80,20 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
             <NewFolder context={this.props.context}
               siteAbsoluteUrl={siteAbsoluteUrl}
               selectedFolder={this.state.selectedFolder}
-              addSubFolder={this._addSubFolder}></NewFolder>
+              addSubFolder={this._addSubFolder} />
+          }
+          {this.state.files.length > 0 &&
+            <div>
+              {this.state.files.map((file) => {
+                return (
+                  <div className={styles.libraryItem} key={file.ServerRelativeUrl} onClick={() => this.props.onFileClick ? this.props.onFileClick(file) : null} >
+                    <Icon iconName="FileASPX" className={styles.icon} />
+                    {file.Name}
+                  </div>
+                );
+              })
+              }
+            </div>
           }
         </div>
       </div>
@@ -91,8 +107,8 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
   private _getBreadcrumbDOM = (): JSX.Element => {
     let breadCrumbDOM = null;
 
-    let breadCrumbItems = this._getCurrentBreadcrumbItems();
-    let overflowIndex = breadCrumbItems.length > 1 ? 1 : 0;
+    const breadCrumbItems = this._getCurrentBreadcrumbItems();
+    const overflowIndex = breadCrumbItems.length > 1 ? 1 : 0;
     breadCrumbDOM = <Breadcrumb items={breadCrumbItems} className={styles.breadcrumbPath} maxDisplayedItems={3} overflowIndex={overflowIndex} />;
 
     return breadCrumbDOM;
@@ -109,7 +125,7 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
       items = [...this.props.initialBreadcrumbItems];
     }
 
-    let rootItem: IBreadcrumbItem = { text: this.props.rootFolder.Name, key: 'Root-Item', onClick: this._getFolders.bind(this, this.props.rootFolder) };
+    const rootItem: IBreadcrumbItem = { text: this.props.rootFolder.Name, key: 'Root-Item', onClick: this._getFolders.bind(this, this.props.rootFolder) };
     items.push(rootItem);
 
     if (this.state.selectedFolder && this.state.selectedFolder.ServerRelativeUrl !== this.props.rootFolder.ServerRelativeUrl) {
@@ -125,7 +141,7 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
             itemText = lib[0].Name;
           }
 
-          let folderItem: IBreadcrumbItem = { text: itemText, key: `Folder-${index.toString()}`, onClick: this._getFolders.bind(this, { Name: folderName, ServerRelativeUrl: folderPath }) };
+          const folderItem: IBreadcrumbItem = { text: itemText, key: `Folder-${index.toString()}`, onClick: this._getFolders.bind(this, { Name: folderName, ServerRelativeUrl: folderPath }) };
           items.push(folderItem);
         }
       });
@@ -169,8 +185,11 @@ export class FolderExplorer extends React.Component<IFolderExplorerProps, IFolde
         const orderBy = this.props.orderby !== undefined ? this.props.orderby : 'Name';
         const orderAscending = this.props.orderAscending !== undefined ? this.props.orderAscending : true;
         this._allFolders = await this._spService.GetFolders(siteAbsoluteUrl, folder.ServerRelativeUrl, orderBy, orderAscending);
+        if (this.props.showFiles) {
+          this._allFiles = await this._spService.GetFiles(siteAbsoluteUrl, folder.ServerRelativeUrl, orderBy, orderAscending);
+        }
       }
-      this.setState({ folders: this._allFolders, selectedFolder: folder, foldersLoading: false });
+      this.setState({ folders: this._allFolders, files: this._allFiles, selectedFolder: folder, foldersLoading: false });
 
       // callback to parent component
       this.props.onSelect(folder);

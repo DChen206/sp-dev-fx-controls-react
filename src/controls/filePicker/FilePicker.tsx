@@ -1,22 +1,22 @@
 import * as React from "react";
 
 import * as strings from "ControlStrings";
-import { IIconProps } from "office-ui-fabric-react/lib/Icon";
+import { IIconProps } from "@fluentui/react/lib/Icon";
 import {
   ActionButton,
   PrimaryButton
-} from "office-ui-fabric-react/lib/components/Button";
-import { Label } from "office-ui-fabric-react/lib/components/Label";
+} from "@fluentui/react/lib/components/Button";
+import { Label } from "@fluentui/react/lib/components/Label";
 import {
   Panel,
   PanelType
-} from "office-ui-fabric-react/lib/components/Panel";
+} from "@fluentui/react/lib/components/Panel";
 import {
   INavLink,
   INavLinkGroup,
   Nav
-} from "office-ui-fabric-react/lib/Nav";
-import { css } from "office-ui-fabric-react/lib/Utilities";
+} from "@fluentui/react/lib/Nav";
+import { css } from "@fluentui/react/lib/Utilities";
 
 import * as telemetry from "../../common/telemetry";
 import { FileBrowserService } from "../../services/FileBrowserService";
@@ -54,7 +54,8 @@ export class FilePicker extends React.Component<
     // Initialize file browser services
     this.fileBrowserService = new FileBrowserService(
       props.context,
-      this.props.itemsCountQueryLimit
+      this.props.itemsCountQueryLimit,
+      this.props.webAbsoluteUrl
     );
     this.oneDriveService = new OneDriveService(
       props.context,
@@ -66,7 +67,8 @@ export class FilePicker extends React.Component<
     );
     this.fileSearchService = new FilesSearchService(
       props.context,
-      this.props.bingAPIKey
+      this.props.bingAPIKey,
+      this.props.webAbsoluteUrl
     );
 
     this.state = {
@@ -76,7 +78,7 @@ export class FilePicker extends React.Component<
     };
   }
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     // Load information about Organisation Assets Library
     let orgAssetsEnabled: boolean = false;
     if (!this.props.hideOrganisationalAssetTab) {
@@ -88,6 +90,13 @@ export class FilePicker extends React.Component<
       organisationAssetsEnabled: orgAssetsEnabled,
       selectedTab: this.getDefaultSelectedTabKey(this.props, orgAssetsEnabled),
     });
+    if (!!this.props.context && !!this.props.webAbsoluteUrl) {
+      const { title, id } = await this.fileBrowserService.getSiteTitleAndId();
+      this.setState({
+        webTitle: title,
+        webId: id
+      });
+    }
   }
 
   /**
@@ -95,7 +104,7 @@ export class FilePicker extends React.Component<
  *
  * @param nextProps
  */
-  public componentWillReceiveProps(nextProps: IFilePickerProps): void {
+  public UNSAFE_componentWillReceiveProps(nextProps: IFilePickerProps): void {
     if (nextProps.isPanelOpen || nextProps.isPanelOpen !== this.props.isPanelOpen) {
       this.setState({
         panelOpen: nextProps.isPanelOpen
@@ -186,7 +195,8 @@ export class FilePicker extends React.Component<
                 renderCustomLinkTabContent={
                   this.props.renderCustomLinkTabContent
                 }
-                allowExternalTenantLinks={true}
+                allowExternalLinks={this.props.allowExternalLinks}
+                checkIfFileExists={this.props.checkIfFileExists !== false}
                 {...linkTabProps}
               />
             )}
@@ -213,6 +223,9 @@ export class FilePicker extends React.Component<
                 fileBrowserService={this.fileBrowserService}
                 includePageLibraries={this.props.includePageLibraries}
                 defaultFolderAbsolutePath={this.props.defaultFolderAbsolutePath}
+                webTitle={this.state.webTitle}
+                webId={this.state.webId}
+                webAbsoluteUrl={this.props.webAbsoluteUrl}
                 {...linkTabProps}
               />
             )}
@@ -224,6 +237,7 @@ export class FilePicker extends React.Component<
                   key: "keyOrgAssets",
                 }}
                 fileBrowserService={this.orgAssetsService}
+                webTitle={this.state.webTitle}
                 {...linkTabProps}
               />
             )}
@@ -276,7 +290,7 @@ export class FilePicker extends React.Component<
   /**
    * Open the panel
    */
-  private _handleOpenPanel = () => {
+  private _handleOpenPanel = (): void => {
     this.setState({
       panelOpen: true,
       selectedTab: this.getDefaultSelectedTabKey(
@@ -289,7 +303,7 @@ export class FilePicker extends React.Component<
   /**
    * Closes the panel
    */
-  private _handleClosePanel = () => {
+  private _handleClosePanel = (): void => {
     if (this.props.onCancel) {
       this.props.onCancel();
     }
@@ -301,14 +315,14 @@ export class FilePicker extends React.Component<
   /**
    * On save action
    */
-  private _handleSave = (filePickerResult: IFilePickerResult[]) => {
+  private _handleSave = (filePickerResult: IFilePickerResult[]): void => {
     this.props.onSave(filePickerResult);
     this.setState({
       panelOpen: false,
     });
   }
 
-  private _handleOnChange = (filePickerResult: IFilePickerResult[]) => {
+  private _handleOnChange = (filePickerResult: IFilePickerResult[]): void => {
     if (this.props.onChange) {
       this.props.onChange(filePickerResult);
     }
@@ -320,16 +334,16 @@ export class FilePicker extends React.Component<
   private _handleLinkClick = (
     ev?: React.MouseEvent<HTMLElement>,
     item?: INavLink
-  ) => {
+  ): void => {
     this.setState({ selectedTab: item.key });
   }
 
   /**
    * Prepares navigation panel options
    */
-  private _getNavPanelOptions = () => {
+  private _getNavPanelOptions = (): INavLinkGroup[] => {
     const addUrl = this.props.storeLastActiveTab !== false;
-    let links = [];
+    const links = [];
 
     if (!this.props.hideRecentTab) {
       links.push({
@@ -407,7 +421,7 @@ export class FilePicker extends React.Component<
       });
     }
 
-    let groups: INavLinkGroup[] = [{ links }];
+    const groups: INavLinkGroup[] = [{ links }];
     return groups;
   }
 

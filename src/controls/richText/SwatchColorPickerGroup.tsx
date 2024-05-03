@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styles from './RteColorPicker.module.scss';
-import { Label } from 'office-ui-fabric-react/lib/Label';
+import { Label } from '@fluentui/react/lib/Label';
 import { ISwatchColorPickerGroupState, ISwatchColorPickerGroupProps, ISwatchColor } from './SwatchColorPickerGroup.types';
-import { FocusZone, FocusZoneDirection, FocusZoneTabbableElements } from 'office-ui-fabric-react/lib/FocusZone';
-import { ActionButton } from 'office-ui-fabric-react/lib/Button';
+import { FocusZone, FocusZoneDirection, FocusZoneTabbableElements } from '@fluentui/react/lib/FocusZone';
+import { ActionButton } from '@fluentui/react/lib/Button';
 import { chunk } from '@microsoft/sp-lodash-subset';
 
 export default class SwatchColorPickerGroup extends React.Component<ISwatchColorPickerGroupProps, ISwatchColorPickerGroupState> {
@@ -23,11 +23,11 @@ export default class SwatchColorPickerGroup extends React.Component<ISwatchColor
                 {
                   colorRows.map((cr: ISwatchColor[], rowIndex: number) => {
                     return (
-                      <tr role="row">
+                      <tr role="row" key={rowIndex}>
                         {
                           cr.map((gc: ISwatchColor, index: number) => {
                             return (
-                              <td role="presentation" className={styles.tableCell}>
+                              <td role="presentation" className={styles.tableCell} key={gc.id}>
                                 <ActionButton className={styles.colorCell}
                                               role="gridCell"
                                               title={gc.label}
@@ -37,10 +37,10 @@ export default class SwatchColorPickerGroup extends React.Component<ISwatchColor
                                               data-is-focusable={true}
                                               id={`${this.props.groupText}-${gc.id}-${index}`}
                                               onClick={() => this.handleColorChanged(gc.color)}>
-                                  <svg className={`${styles.svg} ${this.props.selectedColor!.toUpperCase() === gc.color.toUpperCase() ? styles.selected : ""}`}
+                                  <svg className={`${styles.svg} ${this.props.selectedColor?.toUpperCase() === gc.color.toUpperCase() ? styles.selected : ""}`}
                                       viewBox="0 0 20 20"
                                       fill={gc.color} focusable="false">
-                                    <rect width="100%" height="100%"></rect>
+                                    <rect width="100%" height="100%" />
                                   </svg>
                                 </ActionButton>
                               </td>
@@ -61,7 +61,7 @@ export default class SwatchColorPickerGroup extends React.Component<ISwatchColor
     );
   }
 
-  private handleColorChanged(color: string) {
+  private handleColorChanged(color: string): void {
     this.props.onColorChanged(color);
   }
 }

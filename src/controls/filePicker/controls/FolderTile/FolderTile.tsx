@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styles from './FolderTile.module.scss';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Icon } from '@fluentui/react/lib/Icon';
 import * as strings from 'ControlStrings';
-import { ScreenWidthMinLarge  } from 'office-ui-fabric-react/lib/Styling';
+import { ScreenWidthMinLarge  } from '@fluentui/react/lib/Styling';
 import { IFolderTileProps } from './IFolderTileProps';
 
 export class FolderTile extends React.Component<IFolderTileProps> {
@@ -44,20 +44,19 @@ export class FolderTile extends React.Component<IFolderTileProps> {
                   <div
                     className={css(styles.folderCover, styles.isLarge)}>
                     <Icon
-                      className={styles.folderCoverBack}                      
+                      className={styles.folderCoverBack}
                       imageProps={{
                         src: strings.FolderBackPlate
                       }} />
                     {item.totalFileCount > 0 &&
                       <span className={styles.folderCoverContent}>
                         <span className={styles.folderCoverFrame}>
-                          <span className={styles.itemTileBlankCover} style={{ width: 104, height: 72 }}>
-                          </span>
+                          <span className={styles.itemTileBlankCover} style={{ width: 104, height: 72 }} />
                         </span>
                       </span>
                     }
                     <Icon
-                      className={styles.folderCoverFront}                      
+                      className={styles.folderCoverFront}
                       imageProps={{
                         src: strings.FolderFrontPlate
                       }} />

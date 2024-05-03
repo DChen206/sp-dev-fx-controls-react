@@ -1,5 +1,6 @@
-import { ISPService, ILibsOptions } from "./ISPService";
-import { ISPField, ISPLists } from "../common/SPEntities";
+import { ISPService, ILibsOptions, IFieldsOptions, IContentTypesOptions, IRenderListDataAsStreamClientFormResult } from "./ISPService";
+import { ISPContentType, ISPField, ISPLists, ISPViews } from "../common/SPEntities";
+import {orderBy } from '../controls/viewPicker/IViewPicker';
 
 export default class SPServiceMock implements ISPService {
   private _includeDelay?: boolean;
@@ -9,10 +10,25 @@ export default class SPServiceMock implements ISPService {
     this._includeDelay = includeDelay;
     this._delayTimeout = delayTimeout || 500;
   }
-  public getListItems(filterText: string, listId: string, internalColumnName: string, field: ISPField, keyInternalColumnName?: string, webUrl?: string): Promise<any[]> {
+  public getListFormRenderInfo(listId: string): Promise<IRenderListDataAsStreamClientFormResult> {
+    throw new Error("Method not implemented.");
+  }
+  public getAdditionalListFormFieldInfo(listId: string, webUrl?: string): Promise<ISPField[]> {
+    throw new Error("Method not implemented.");
+  }
+  public getFields(options?: IFieldsOptions): Promise<ISPField[]> {
+    throw new Error("Method not implemented.");
+  }
+  public getContentTypes(options?: IContentTypesOptions): Promise<ISPContentType[]> {
+    throw new Error("Method not implemented.");
+  }
+  public getListItems(filterText: string, listId: string, internalColumnName: string, field: ISPField, keyInternalColumnName?: string, webUrl?: string): Promise<any[]> { // eslint-disable-line @typescript-eslint/no-explicit-any
     throw new Error("Method not implemented.");
   }
   public getField = async (listId: string, internalColumnName: string, webUrl?: string): Promise<ISPField | undefined> => {
+    return;
+  }
+  public getViews(listId?: string, orderBy?: orderBy, filter?: string) : Promise<ISPViews> {
     return;
   }
 
@@ -27,6 +43,7 @@ export default class SPServiceMock implements ISPService {
     ]
   };
   public getLibs(options?: ILibsOptions): Promise<ISPLists> {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<ISPLists>(async resolve => {
       if (this._includeDelay === true) {
         await this.sleep(this._delayTimeout); // Simulate network load

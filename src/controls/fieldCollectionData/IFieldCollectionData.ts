@@ -1,4 +1,6 @@
-import { ICustomCollectionField } from ".";
+import { BaseComponentContext } from "@microsoft/sp-component-base";
+import { ICustomCollectionField } from "./ICustomCollectionField";
+import { IPanelProps } from "@fluentui/react";
 
 export interface IFieldCollectionDataProps {
   /**
@@ -40,7 +42,7 @@ export interface IFieldCollectionDataProps {
   /**
    * The collection data value.
    */
-  value: any[];
+  value: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * Specify if you want to enable sorting
    */
@@ -70,11 +72,28 @@ export interface IFieldCollectionDataProps {
    */
   itemsPerPage?: number;
   /**
-   * Allows you to show Search Box and specify own filtering logic.
+   * Allow overriding panel props such as size, type, layerProps, etc.
    */
-  executeFiltering?: (searchFilter: string, item: any) => boolean;
+  panelProps?: IPanelProps;
+  /**
+   * Allows you to show Search Box and specify own filtering logic.
+   */  
+  executeFiltering?: (searchFilter: string, item: any) => boolean; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  onChanged: (value: any[]) => void;
+  onChanged: (value: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
+  /**
+   * Used for CustomCollectionFieldType peoplepicker 
+   */
+  context?: BaseComponentContext;
+  /**
+   * Show the collectionDataViewer inside the panel, defaults to true 
+   */
+  usePanel?: boolean;
+  /**
+   * The message when no data is added
+   */
+  noDataMessage?: string;
+
 }
 
 export interface IFieldCollectionDataState {

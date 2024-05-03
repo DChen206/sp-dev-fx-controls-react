@@ -2,12 +2,12 @@ import * as React from 'react';
 import { findIndex } from '@microsoft/sp-lodash-subset';
 import { IFileTypeIconProps, ApplicationType, ApplicationIconList, IconType, IconSizes, ImageSize, IImageResult, ICON_GENERIC_16, ICON_GENERIC_48, ICON_GENERIC_96, ImageInformation } from './IFileTypeIcon';
 import * as telemetry from '../../common/telemetry';
-import { Icon } from 'office-ui-fabric-react/lib/components/Icon';
-import * as styles from './FileTypeIcon.module.scss';
+import { Icon } from '@fluentui/react/lib/components/Icon';
+import { ICON_GENERIC_20 } from '.';
 
 const ICON_GENERIC = 'Page';
 const ICON_DEFAULT_SIZE = 'icon16';
-const ICON_CDN_URL = `https://spoprod-a.akamaihd.net/files/fabric/assets/item-types`;
+const ICON_CDN_URL = `https://modernb.akamai.odsp.cdn.office.net/files/fabric-cdn-prod_20210703.001/assets/item-types`;
 
 /**
 * File type icon component
@@ -225,7 +225,8 @@ export class FileTypeIcon extends React.Component<IFileTypeIconProps, {}> {
       const iconImage = this._getIconImageName();
       // Check if the image was found, otherwise a generic image will be returned
       if (iconImage.cdnFallback) {
-        const iconUrl = `${ICON_CDN_URL}/${iconImage.size.replace("icon", "")}/${iconImage.cdnFallback}.png`;
+        const size = iconImage.size.replace("icon", "");
+        const iconUrl = `${ICON_CDN_URL}/${size}/${iconImage.cdnFallback}.png`;
         iconElm = <Icon imageProps={{ src: iconUrl }} />;
       } else if (iconImage.image) {
         iconElm = <Icon imageProps={{ className: `ms-BrandIcon--${iconImage.size} ms-BrandIcon--${iconImage.image}` }} />;
@@ -235,22 +236,25 @@ export class FileTypeIcon extends React.Component<IFileTypeIconProps, {}> {
         // Check the size of the generic image which has to be returned
         switch (iconImage.size) {
           case 'icon16':
-          imgElm = <Icon imageProps={{ src: ICON_GENERIC_16 }} />;
-          break;
+            imgElm = <Icon imageProps={{ src: ICON_GENERIC_16 }} />;
+            break;
+          case 'icon20':
+            imgElm = <Icon imageProps={{ src: ICON_GENERIC_20 }} />;
+            break;
           case 'icon48':
-          imgElm = <Icon imageProps={{ src: ICON_GENERIC_48}} />;
-          break;
+            imgElm = <Icon imageProps={{ src: ICON_GENERIC_48 }} />;
+            break;
           case 'icon96':
-          imgElm = <Icon imageProps={{ src: ICON_GENERIC_96}} />;
-          break;
+            imgElm = <Icon imageProps={{ src: ICON_GENERIC_96 }} />;
+            break;
           default:
-          imgElm = <Icon imageProps={{ src: ICON_GENERIC_16}} />;
-          break;
+            imgElm = <Icon imageProps={{ src: ICON_GENERIC_16 }} />;
+            break;
         }
 
         iconElm = (
           <div style={{ display: 'inline-block' }}>
-          {imgElm}
+            {imgElm}
           </div>
         );
       }

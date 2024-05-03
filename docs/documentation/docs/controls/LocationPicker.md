@@ -17,7 +17,7 @@ This control allows you to search and select the Location, also allows enter a c
 
 ```TypeScript
 
-import { LocationPicker,ILocationPickerItem } from  "fx-controls-react/lib/LocationPicker";
+import { LocationPicker,ILocationPickerItem } from  "@pnp/spfx-controls-react/lib/LocationPicker";
 
 ```
 
@@ -32,7 +32,7 @@ import { LocationPicker,ILocationPickerItem } from  "fx-controls-react/lib/Locat
 <LocationPicker
           context={this.props.context}
           label="Location"
-          onSelectionChanged={(locValue: ILocationPickerItem) => {
+          onChange={(locValue: ILocationPickerItem) => {
             console.log(locValue.DisplayName + ", " + locValue.Address.Street)
           }
           }/>

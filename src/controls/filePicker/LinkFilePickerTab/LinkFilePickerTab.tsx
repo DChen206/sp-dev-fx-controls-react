@@ -4,9 +4,9 @@ import { ILinkFilePickerTabProps } from './ILinkFilePickerTabProps';
 import { ILinkFilePickerTabState } from './ILinkFilePickerTabState';
 import { GeneralHelper } from '../../../common/utilities/GeneralHelper';
 import { IFilePickerResult } from '../FilePicker.types';
-import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/components/Button';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
+import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/components/Button';
+import { TextField } from '@fluentui/react/lib/TextField';
+import { css } from '@fluentui/react/lib/Utilities';
 
 import * as strings from 'ControlStrings';
 import styles from './LinkFilePickerTab.module.scss';
@@ -63,7 +63,7 @@ export default class LinkFilePickerTab extends React.Component<ILinkFilePickerTa
   /**
    * Called as user types in a new value
    */
-  private _handleChange = (fileUrl: string) => {
+  private _handleChange = (fileUrl: string): void => {
     const filePickerResult: IFilePickerResult = fileUrl && this._isUrl(fileUrl) ? {
       fileAbsoluteUrl: fileUrl,
       fileName: GeneralHelper.getFileNameFromUrl(fileUrl),
@@ -93,9 +93,14 @@ export default class LinkFilePickerTab extends React.Component<ILinkFilePickerTa
     }
 
     // If we don't allow external links, verify that we're in the same domain
-    if (!this.props.allowExternalTenantLinks && !this._isSameDomain(value)) {
+    if (!this.props.allowExternalLinks && !this._isSameDomain(value)) {
       this.setState({ isValid: false });
       return strings.NoExternalLinksValidationMessage;
+    }
+
+    if(!this.props.checkIfFileExists){
+      this.setState({ isValid: true });
+      return '';
     }
 
     const fileExists = await this.props.fileSearchService.checkFileExists(value);
@@ -108,14 +113,14 @@ export default class LinkFilePickerTab extends React.Component<ILinkFilePickerTa
   /**
    * Handles when user saves
    */
-  private _handleSave = () => {
+  private _handleSave = (): void => {
     this.props.onSave([this.state.filePickerResult]);
   }
 
   /**
    * HAndles when user closes without saving
    */
-  private _handleClose = () => {
+  private _handleClose = (): void => {
     this.props.onClose();
   }
 
@@ -133,7 +138,12 @@ export default class LinkFilePickerTab extends React.Component<ILinkFilePickerTa
   }
 
   private _isSameDomain = (fileUrl: string): boolean => {
+    if (fileUrl) {
+      return true;
+    }
     const siteUrl: string = this.props.context.pageContext.web.absoluteUrl;
-    return GeneralHelper.getAbsoluteDomainUrl(siteUrl) === GeneralHelper.getAbsoluteDomainUrl(fileUrl);
+    const siteDomainParts: string[] = GeneralHelper.getDomain(siteUrl).split('.');
+    const fileDomainParts: string[] = GeneralHelper.getDomain(fileUrl).split('.');
+    return siteDomainParts[0] === fileDomainParts[0] || `${siteDomainParts[0]}-my` === fileDomainParts[0];
   }
 }

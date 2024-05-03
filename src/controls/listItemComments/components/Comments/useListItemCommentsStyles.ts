@@ -1,11 +1,11 @@
 import * as React from "react";
-import { IDocumentCardStyles } from "office-ui-fabric-react/lib/DocumentCard";
-import { IStackStyles } from "office-ui-fabric-react/lib/Stack";
+import { IDocumentCardStyles } from "@fluentui/react/lib/DocumentCard";
+import { IStackStyles } from "@fluentui/react/lib/Stack";
 import {
   IStyle,
   mergeStyles,
   mergeStyleSets,
-} from "office-ui-fabric-react/lib/Styling";
+} from "@fluentui/react/lib/Styling";
 import { AppContext } from "../../common";
 import { TILE_HEIGHT } from "../../common/constants";
 
@@ -16,8 +16,9 @@ interface returnObjectStyles {
   renderUserContainerStyles: Partial<IStackStyles>;
   documentCardStyles: Partial<IDocumentCardStyles>;
   documentCardDeleteStyles: Partial<IDocumentCardStyles>;
+  documentCardHighlightedStyles: Partial<IDocumentCardStyles>;
   documentCardUserStyles: Partial<IDocumentCardStyles>;
-  configurationListClasses: any;
+  configurationListClasses: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const useListItemCommentsStyles = (): returnObjectStyles => {
@@ -51,6 +52,19 @@ export const useListItemCommentsStyles = (): returnObjectStyles => {
       marginBottom: 7,
       width: 322,
       backgroundColor: theme.neutralLighterAlt,
+      ":hover": {
+        borderColor: theme.themePrimary,
+        borderWidth: 1,
+      } as IStyle,
+    } as IStyle,
+  };
+
+  const documentCardHighlightedStyles: Partial<IDocumentCardStyles> = {
+    root: {
+      marginBottom: 7,
+      width: 322,
+      backgroundColor: theme.themeLighter,
+      border: "solid 3px "+theme.themePrimary,
       ":hover": {
         borderColor: theme.themePrimary,
         borderWidth: 1,
@@ -121,6 +135,7 @@ export const useListItemCommentsStyles = (): returnObjectStyles => {
     renderUserContainerStyles,
     documentCardStyles,
     documentCardDeleteStyles,
+    documentCardHighlightedStyles,
     documentCardUserStyles,
     configurationListClasses,
   };

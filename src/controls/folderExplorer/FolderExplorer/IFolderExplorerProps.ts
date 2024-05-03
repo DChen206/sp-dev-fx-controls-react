@@ -1,5 +1,6 @@
 import { BaseComponentContext } from '@microsoft/sp-component-base';
-import { IBreadcrumbItem } from "office-ui-fabric-react/lib/Breadcrumb";
+import { IFileInfo } from '@pnp/sp/files';
+import { IBreadcrumbItem } from "@fluentui/react/lib/Breadcrumb";
 import { IFolder } from '../../../services/IFolderExplorerService';
 
 
@@ -56,8 +57,19 @@ export interface IFolderExplorerProps {
   orderAscending?: boolean;
 
   /**
+   * Display files in the folder explorer
+   */
+  showFiles?: boolean;
+
+  /**
    * Callback function called after a folder is selected
    * @argument folder The selected folder
    */
   onSelect: (folder: IFolder) => void;
+
+  /**
+   * Callback function called after a file is clicked
+   * @argument file The selected folder
+   */
+  onFileClick?: (file: IFileInfo) => void;
 }

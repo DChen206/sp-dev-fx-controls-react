@@ -1,9 +1,9 @@
 import * as strings from 'ControlStrings';
 import * as React from 'react';
 import { ITimeComponentProps } from './ITimeComponentProps';
-import { MaskedTextField } from 'office-ui-fabric-react/lib/TextField';
+import { MaskedTextField } from '@fluentui/react/lib/TextField';
 import { TimeHelper } from './TimeHelper';
-import { IDropdownOption, Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
+import { IDropdownOption, Dropdown } from '@fluentui/react/lib/Dropdown';
 import { TimeDisplayControlType } from './TimeDisplayControlType';
 
 /**
@@ -68,8 +68,8 @@ export default class SecondsComponent extends React.Component<ITimeComponentProp
     }
   }
 
-  private _initSecondsOptions() {
-    let seconds: IDropdownOption[] = [];
+  private _initSecondsOptions(): void {
+    const seconds: IDropdownOption[] = [];
     for (let k = 0; k < 60; k++) {
       let digitSec: string;
       if (k < 10) {

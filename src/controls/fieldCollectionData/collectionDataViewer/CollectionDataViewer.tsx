@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styles from '../FieldCollectionData.module.scss';
-import { ICollectionDataViewerProps, ICollectionDataViewerState } from '.';
+import { ICollectionDataViewerProps } from './ICollectionDataViewerProps';
+import { ICollectionDataViewerState } from './ICollectionDataViewerState';
 import { CollectionDataItem } from '../collectionDataItem';
-import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/components/Button';
-import { Icon } from 'office-ui-fabric-react/lib/components/Icon';
+import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/components/Button';
+import { Icon } from '@fluentui/react/lib/components/Icon';
 import * as strings from 'ControlStrings';
 import { cloneDeep, sortBy, isEmpty, findIndex } from '@microsoft/sp-lodash-subset';
 import { Pagination } from '../../pagination';
-import { SearchBox } from 'office-ui-fabric-react/lib/components/SearchBox';
+import { SearchBox } from '@fluentui/react/lib/components/SearchBox';
 import { Guid } from '@microsoft/sp-core-library';
 
 export class CollectionDataViewer extends React.Component<ICollectionDataViewerProps, ICollectionDataViewerState> {
@@ -48,7 +49,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Add a new item to the collection
    */
-  private addItem = (item: any) => {
+  private addItem = (item: any): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!item.uniqueId) {
       item.uniqueId = Guid.newGuid();
     }
@@ -62,13 +63,18 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
         inCreationItem: null,
         currentPage
       };
+    }, () => {
+      // if panel is not used save directly
+      if (typeof this.props.usePanel === "boolean" && this.props.usePanel === false) {
+        this.props.fOnSave(this.state.crntItems);
+      }
     });
   }
 
   /**
    * Remove an item from the collection
    */
-  private updateItem = (idx: number, item: any) => {
+  private updateItem = (idx: number, item: any): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.setState((prevState: ICollectionDataViewerState): ICollectionDataViewerState => {
       const { crntItems } = prevState;
       // Update the item in the array
@@ -77,13 +83,18 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
         crntItems,
         currentPage: prevState.currentPage
       };
+    }, () => {
+      // if panel is not used save directly
+      if (typeof this.props.usePanel === "boolean" && this.props.usePanel === false) {
+        this.props.fOnSave(this.state.crntItems);
+      }
     });
   }
 
   /**
    * Remove an item from the collection
    */
-  private deleteItem = (idx: number) => {
+  private deleteItem = (idx: number): void => {
     this.setState((prevState: ICollectionDataViewerState): ICollectionDataViewerState => {
       let { crntItems } = prevState;
       crntItems.splice(idx, 1);
@@ -98,6 +109,11 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
         crntItems: sortBy(crntItems, this.SORT_IDX),
         currentPage
       };
+    }, () => {
+      // if panel is not used save directly
+      if (typeof this.props.usePanel === "boolean" && this.props.usePanel === false) {
+        this.props.fOnSave(this.state.crntItems);
+      }
     });
   }
 
@@ -106,7 +122,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Validate every item
    */
-  private validateItem = (idx: number, isValid: boolean) => {
+  private validateItem = (idx: number, isValid: boolean): void => {
     this.setState((prevState: ICollectionDataViewerState) => {
       const { validation } = prevState;
       validation[idx] = isValid;
@@ -119,7 +135,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Check if all items are valid
    */
-  private allItemsValid() {
+  private allItemsValid(): boolean {
     const { validation } = this.state;
     if (validation) {
       const keys = Object.keys(validation);
@@ -135,7 +151,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Currently in creation
    */
-  private addInCreation = (item: any) => {
+  private addInCreation = (item: any): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     this.setState({
       inCreationItem: item
     });
@@ -144,7 +160,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Add the item and save the form
    */
-  private addAndSave = () => {
+  private addAndSave = (): void => {
     // Check if the item is not empty
     if (this.state.inCreationItem) {
       let crntItems = [...this.state.crntItems, this.state.inCreationItem];
@@ -162,7 +178,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
    * @param oldIdx
    * @param newIdx
    */
-  private moveItemTo(crntItems: any[], oldIdx: number, newIdx: number): any[] {
+  private moveItemTo(crntItems: any[], oldIdx: number, newIdx: number): any[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (newIdx > -1 && newIdx < crntItems.length) {
       const removedElement = crntItems.splice(oldIdx, 1)[0];
       if (removedElement) {
@@ -177,7 +193,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
    *
    * @param crntItems
    */
-  private updateSortProperty(crntItems: any[]): any[] {
+  private updateSortProperty(crntItems: any[]): any[] { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Update the sort order
     return crntItems.map((item, itemIdx) => {
       item[this.SORT_IDX] = itemIdx + 1;
@@ -188,7 +204,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Update the sort order
    */
-  private updateSortOrder = (oldIdx: number, newIdx: number) => {
+  private updateSortOrder = (oldIdx: number, newIdx: number): void => {
     this.setState((prevState: ICollectionDataViewerState) => {
       const { crntItems } = prevState;
       let newOrderedItems = cloneDeep(crntItems);
@@ -205,14 +221,14 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
   /**
    * Save the collection data
    */
-  private onSave = () => {
+  private onSave = (): void => {
     this.props.fOnSave(this.state.crntItems);
   }
 
   /**
    * Cancel
    */
-  private onCancel = () => {
+  private onCancel = (): void => {
     this.props.fOnClose();
   }
 
@@ -224,7 +240,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     return Math.ceil(items.length / this.props.itemsPerPage);
   }
 
-  private getPageItems = (currentPageIndex = null, currentItems = null) => {
+  private getPageItems = (currentPageIndex: number | undefined = null, currentItems: any[] | undefined = null): any[] => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { crntItems, currentPage } = this.state;
 
     const items = !currentItems ? crntItems : currentItems;
@@ -240,7 +256,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     return items.slice(startIndex, endIndex);
   }
 
-  private getFirstElementIndex = (currentPage, crntItems) => {
+  private getFirstElementIndex = (currentPage: number, crntItems: any[] | undefined): number => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { itemsPerPage } = this.props;
 
     if (!crntItems) {
@@ -254,7 +270,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     const firstElementIndex = (currentPage - 1) * itemsPerPage;
     return firstElementIndex;
   }
-  private getLastElementIndex = (currentPage, crntItems) => {
+  private getLastElementIndex = (currentPage: number, crntItems: any[] | undefined): number => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { itemsPerPage } = this.props;
 
     if (!crntItems) {
@@ -270,8 +286,9 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     return lastElementIndex;
   }
 
-  private getCollectionDataItem = (item, idx, allItems) => {
+  private getCollectionDataItem = (item: any, idx: number, allItems: any[]): JSX.Element => { // eslint-disable-line @typescript-eslint/no-explicit-any
     return <CollectionDataItem
+    context={this.props.context}
       key={item.uniqueId}
       fields={this.props.fields}
       index={idx}
@@ -290,14 +307,14 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     return isPagingEnabled;
   }
 
-  private executeItemsFiltering = (items: any[]) => {
+  private executeItemsFiltering = (items: any[]): boolean => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { executeFiltering } = this.props;
     const { searchFilter } = this.state;
 
     if (!items || items.length <= 0) {
       return false;
     }
-    if (executeFiltering == null) {
+    if (executeFiltering === null) {
       return false;
     }
     if (isEmpty(searchFilter)) {
@@ -306,7 +323,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
     return true;
   }
 
-  private getFilteredItems = (items: any[]) => {
+  private getFilteredItems = (items: any[]): any[] => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const { executeFiltering } = this.props;
     const { searchFilter } = this.state;
 
@@ -317,7 +334,8 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
    * Default React render
    */
   public render(): React.ReactElement<ICollectionDataViewerProps> {
-    let { currentPage, crntItems } = this.state;
+    const { currentPage } = this.state;
+    let crntItems = this.state.crntItems;
 
     const isPagingEnabled = this.isPagingEnabled();
 
@@ -337,7 +355,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
           <div className={`FieldCollectionData__panel__table-head ${styles.tableRow} ${styles.tableHead}`}>
             {
               this.props.enableSorting && (
-                <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`}></span>
+                <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`} />
               )
             }
             {
@@ -345,13 +363,13 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
                 <span key={`dataviewer-${f.id}`} className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`}>{f.title} {f.required && <Icon className={styles.required} iconName="Asterisk" />}</span>
               ))
             }
-            <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`}></span>
-            <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`}></span>
+            <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`} />
+            <span className={`FieldCollectionData__panel__table-cell ${styles.tableCell}`} />
           </div>
           {
             (this.state.crntItems && this.state.crntItems.length > 0) &&
             this.state.crntItems.map((item, idx, allItems) => {
-              const elementIndex = findIndex(elements, (x: any) => { return x.uniqueId === item.uniqueId; });
+              const elementIndex = findIndex(elements, (x: any) => { return x.uniqueId === item.uniqueId; }); // eslint-disable-line @typescript-eslint/no-explicit-any
               if (elementIndex >= 0) {
                 return this.getCollectionDataItem(item, idx, allItems);
               } else {
@@ -363,6 +381,7 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
           {
             !this.props.disableItemCreation && (
               <CollectionDataItem fields={this.props.fields}
+                context={this.props.context}
                 index={null}
                 item={null}
                 sortingEnabled={this.props.enableSorting}
@@ -383,15 +402,20 @@ export class CollectionDataViewer extends React.Component<ICollectionDataViewerP
 
         {
           (!this.state.crntItems || this.state.crntItems.length === 0) && (
-            <p className={`FieldCollectionData__panel__no-collection-data ${styles.noCollectionData}`}>{strings.CollectionDataEmptyValue}</p>
+            <p className={`FieldCollectionData__panel__no-collection-data ${styles.noCollectionData}`}>{typeof this.props.noDataMessage === "string" ? this.props.noDataMessage : strings.CollectionDataEmptyValue}</p>
           )
         }
 
-        <div className={`FieldCollectionData__panel__actions ${styles.panelActions}`}>
-          {this.state.inCreationItem && <PrimaryButton text={this.props.saveAndAddBtnLabel || strings.CollectionSaveAndAddButtonLabel} onClick={this.addAndSave} disabled={!this.allItemsValid()} className="FieldCollectionData__panel__action__add" />}
-          {!this.state.inCreationItem && <PrimaryButton text={this.props.saveBtnLabel || strings.SaveButtonLabel} onClick={this.onSave} disabled={!this.allItemsValid()} className="FieldCollectionData__panel__action__save" />}
-          <DefaultButton text={this.props.cancelBtnLabel || strings.CancelButtonLabel} onClick={this.onCancel} className="FieldCollectionData__panel__action__cancel" />
-        </div>
+        {
+          // Only display the save and cancel buttons when Panel is used
+          (typeof this.props.usePanel !== "boolean" || this.props.usePanel !== false) && (
+            <div className={`FieldCollectionData__panel__actions ${styles.panelActions}`}>
+              {this.state.inCreationItem && <PrimaryButton text={this.props.saveAndAddBtnLabel || strings.CollectionSaveAndAddButtonLabel} onClick={this.addAndSave} disabled={!this.allItemsValid()} className="FieldCollectionData__panel__action__add" />}
+              {!this.state.inCreationItem && <PrimaryButton text={this.props.saveBtnLabel || strings.SaveButtonLabel} onClick={this.onSave} disabled={!this.allItemsValid()} className="FieldCollectionData__panel__action__save" />}
+              <DefaultButton text={this.props.cancelBtnLabel || strings.CancelButtonLabel} onClick={this.onCancel} className="FieldCollectionData__panel__action__cancel" />
+            </div>
+          )
+        }
       </div>
     );
   }

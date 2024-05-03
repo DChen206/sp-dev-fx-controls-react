@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { ITermProps, ITermState } from './ITaxonomyPicker';
 
 import styles from './TaxonomyPicker.module.scss';
 import TermActionsControl from './termActions/TermActionsControl';
 import { UpdateAction, UpdateType } from './termActions';
+import { IStyle } from '@fluentui/react';
 
 
 /**
@@ -17,7 +18,7 @@ export default class Term extends React.Component<ITermProps, ITermState> {
     super(props);
 
     // Check if current term is selected
-    let active = this.props.activeNodes.filter(item => item.key === this.props.term.Id);
+    const active = this.props.activeNodes.filter(item => item.key === this.props.term.Id);
 
     this.state = {
       selected: active.length > 0,
@@ -32,7 +33,7 @@ export default class Term extends React.Component<ITermProps, ITermState> {
   /**
    * Handle the checkbox change trigger
    */
-  private _handleChange(ev: React.FormEvent<HTMLElement>, isChecked: boolean) {
+  private _handleChange(ev: React.FormEvent<HTMLElement>, isChecked: boolean): void {
     this.setState({
       selected: isChecked
     });
@@ -44,10 +45,10 @@ export default class Term extends React.Component<ITermProps, ITermState> {
    * @param nextProps
    * @param nextContext
    */
-  public componentWillReceiveProps?(nextProps: ITermProps, nextContext: any): void {
+  public UNSAFE_componentWillReceiveProps(nextProps: ITermProps, nextContext: any): void { // eslint-disable-line @typescript-eslint/no-explicit-any
     // If multi-selection is turned off, only a single term can be selected
     //if (!this.props.multiSelection) {
-      let active = nextProps.activeNodes.filter(item => item.key === this.props.term.Id);
+      const active = nextProps.activeNodes.filter(item => item.key === this.props.term.Id);
       this.setState ({
         selected: active.length > 0,
         termLabel: this.state.termLabel
@@ -58,7 +59,7 @@ export default class Term extends React.Component<ITermProps, ITermState> {
   /**
    * Get the right class name for the term
    */
-  private getClassName() {
+  private getClassName(): string {
     if (this.props.term.IsDeprecated) {
       return styles.termDisabled;
     }
@@ -104,7 +105,7 @@ export default class Term extends React.Component<ITermProps, ITermState> {
     const styleProps: React.CSSProperties = {
       marginLeft: `${(this.props.term.PathDepth * 30)}px`
     };
-    const checkBoxStyle: React.CSSProperties = {
+    const checkBoxStyle: IStyle = {
       display: "inline-flex"
     };
 
@@ -118,7 +119,9 @@ export default class Term extends React.Component<ITermProps, ITermState> {
           <div>
             <Checkbox
               checked={this.state.selected}
-              style={checkBoxStyle}
+              styles={{
+                checkbox: checkBoxStyle
+              }}
               disabled={this.props.term.IsDeprecated || !this.props.term.IsAvailableForTagging || this.props.disabled || this.state.disabled}
               className={this.getClassName()}
               label={this.state.termLabel}

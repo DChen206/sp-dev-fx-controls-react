@@ -1,16 +1,19 @@
 import * as React from "react";
 import { isEqual } from '@microsoft/sp-lodash-subset';
 import { TimeConvention, DateConvention } from "./DateTimeConventions";
-import { DatePicker } from "office-ui-fabric-react/lib/DatePicker";
-import { Label } from "office-ui-fabric-react/lib/Label";
+import { DatePicker } from "@fluentui/react/lib/DatePicker";
+import { Label } from "@fluentui/react/lib/Label";
+import { IconButton } from "@fluentui/react/lib/Button";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import styles from "./DateTimePicker.module.scss";
 import HoursComponent from "./HoursComponent";
 import MinutesComponent from "./MinutesComponent";
 import SecondsComponent from "./SecondsComponent";
 import * as telemetry from "../../common/telemetry";
-import { Async, css } from 'office-ui-fabric-react/lib/Utilities';
-import { IDateTimePickerProps, IDateTimePickerState, DateTimePickerStrings } from ".";
+import { Async, css } from '@fluentui/react/lib/Utilities';
+import { IDateTimePickerProps } from "./IDateTimePickerProps";
+import { IDateTimePickerState } from "./IDateTimePickerState";
+import { DateTimePickerStrings } from "./DateTimePickerStrings";
 import { TimeHelper } from "./TimeHelper";
 import { TimeDisplayControlType } from "./TimeDisplayControlType";
 
@@ -61,14 +64,14 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
   /**
    * Called when the component will unmount
    */
-  public componentWillUnmount() {
+  public componentWillUnmount(): void {
     this.async.dispose();
   }
 
   /**
    * Called before the component receives new props, used for matching state with new props.
    */
-  public componentWillReceiveProps(nextProps: IDateTimePickerProps): void {
+  public UNSAFE_componentWillReceiveProps(nextProps: IDateTimePickerProps): void {
     if (!isEqual(nextProps.value, this.props.value)) {
       const { day, hours, minutes, seconds } = DateTimePicker.getDateComponents(nextProps.value, this.props.dateConvention);
       this.setState({ day, hours, minutes, seconds });
@@ -97,9 +100,11 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
    * Function called when the DatePicker Office UI Fabric component selected date changed
    */
   private onSelectDate = (date: Date): void => {
+
     if (!TimeHelper.isValidDate(date)) {
       return;
     }
+
     // Get hours, minutes and seconds from state or default to zero
     const { hours = 0, minutes = 0, seconds = 0 } = this.state;
     const day = TimeHelper.cloneDate(date);
@@ -109,7 +114,18 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
     this.setState({ day }, () => this.delayedValidate(this.state.day));
   }
 
+  /**
+   * Function called from the clearDate iconbutton
+   */
+  private clearDate(): void {
+    this.setState({
+      day: null
+    });
 
+    if (this.props.onChange) {
+      this.props.onChange(null);
+    }
+  }
 
   /**
    * Function called when hours value have been changed
@@ -134,7 +150,7 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
           }
         }
         else if (hours === 12) {
-          //am - if hours == 12, set hours to 0 here
+          //am - if hours === 12, set hours to 0 here
           hours = 0;
         }
       }
@@ -190,10 +206,10 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
   /**
    * Validates string input on date time field
    */
-  private handleTextChange = (e:React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue:string, locString:string) => {
+  private handleTextChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue: string, locString: string): void => {
     if (!TimeHelper.isValidDate(newValue)) {
       this.setState({
-        errorMessage:locString,
+        errorMessage: locString,
       });
       return;
     }
@@ -211,26 +227,32 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
       timeConvention,
       dateConvention = DateConvention.DateTime,
       firstDayOfWeek,
+      firstWeekOfYear,
       isMonthPickerVisible = true,
       showGoToToday,
+      allowTextInput = true,
       showMonthPickerAsOverlay = false,
       showWeekNumbers = false,
       showSeconds = false,
       formatDate,
+      parseDateFromString,
       value = this.state.day,
       strings: dateStrings = new DateTimePickerStrings(), // Defines the DatePicker control labels
       timeDisplayControlType,
       placeholder,
       showLabels,
+      initialPickerDate,
       minDate,
       maxDate,
-      minutesIncrementStep
+      minutesIncrementStep,
+      showClearDate = false,
+      showClearDateIcon = 'RemoveEvent'
     } = this.props;
 
     const { textErrorMessage } = dateStrings;
-    const hours: number = value != null ? value.getHours() : this.state.hours;
-    const minutes: number = value != null ? value.getMinutes() : this.state.minutes;
-    const seconds: number = value != null ? value.getSeconds() : this.state.seconds;
+    const hours: number = value !== null ? value.getHours() : this.state.hours;
+    const minutes: number = value !== null ? value.getMinutes() : this.state.minutes;
+    const seconds: number = value !== null ? value.getSeconds() : this.state.seconds;
 
     // Check if the time element needs to be rendered
     let timeElm: JSX.Element = <div className="hidden" />;
@@ -303,17 +325,20 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
             <div className={styles.picker}>
               <DatePicker
                 formatDate={formatDate}
+                parseDateFromString={parseDateFromString}
                 disabled={disabled}
                 value={value}
                 strings={dateStrings}
                 isMonthPickerVisible={isMonthPickerVisible}
                 onSelectDate={this.onSelectDate}
-                allowTextInput={true}
+                allowTextInput={allowTextInput}
                 firstDayOfWeek={firstDayOfWeek}
+                firstWeekOfYear={firstWeekOfYear}
                 showGoToToday={showGoToToday}
                 showMonthPickerAsOverlay={showMonthPickerAsOverlay}
                 showWeekNumbers={showWeekNumbers}
                 placeholder={placeholder}
+                initialPickerDate={initialPickerDate}
                 minDate={minDate}
                 maxDate={maxDate}
                 textField={{
@@ -321,6 +346,8 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
                 }}
               />
             </div>
+            {showClearDate === true && this.state.day !== null && <IconButton iconProps={{ iconName: showClearDateIcon }} onClick={() => this.clearDate()} />}
+
           </div>
 
           {timeElm}
@@ -348,7 +375,7 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
 
     this._latestValidateValue = timestamp;
 
-    const result: string | PromiseLike<string> = this.props.onGetErrorMessage(dateVal);
+    const result: string | Promise<string> = this.props.onGetErrorMessage(dateVal);
     if (typeof result !== 'undefined') {
       if (typeof result === 'string') {
         if (result === '') {
@@ -367,7 +394,8 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
           this.setState({
             errorMessage: errorMessage
           });
-        });
+        })
+        .catch(() => { /* no-op; */ });
       }
     } else {
       this.notifyAfterValidate(this.props.value, dateVal);
@@ -377,7 +405,7 @@ export class DateTimePicker extends React.Component<IDateTimePickerProps, IDateT
   /**
    * Notifies the parent Web Part of a property value change
    */
-  private notifyAfterValidate = (oldValue: Date, newValue: Date) => {
+  private notifyAfterValidate = (oldValue: Date, newValue: Date): void => {
     if (typeof this.props.onChange !== 'undefined' && this.props.onChange !== null && newValue !== null) {
       this.props.onChange(newValue);
     }

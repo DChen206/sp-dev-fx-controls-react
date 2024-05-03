@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { FocusZone } from 'office-ui-fabric-react/lib/FocusZone';
-import { List } from 'office-ui-fabric-react/lib/List';
-import { Spinner } from 'office-ui-fabric-react/lib/Spinner';
-import { Image, ImageFit } from 'office-ui-fabric-react/lib/Image';
+import { List } from '@fluentui/react/lib/List';
+import { Spinner } from '@fluentui/react/lib/Spinner';
+import { Image, ImageFit } from '@fluentui/react/lib/Image';
 import { IDocumentLibraryBrowserProps } from './IDocumentLibraryBrowserProps';
 import { IDocumentLibraryBrowserState } from './IDocumentLibraryBrowserState';
 import { ILibrary } from '../../../../services/FileBrowserService.types';
 
-import { IRectangle } from 'office-ui-fabric-react/lib/Utilities';
-import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
+import { IRectangle } from '@fluentui/react/lib/Utilities';
+import { DefaultButton } from '@fluentui/react/lib/Button';
 
 import styles from './DocumentLibraryBrowser.module.scss';
 import * as strings from 'ControlStrings';
@@ -40,7 +39,7 @@ export class DocumentLibraryBrowser extends React.Component<IDocumentLibraryBrow
     };
   }
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const lists = await this.props.fileBrowserService.getSiteMediaLibraries(this.props.includePageLibraries);
     this.setState({
       lists: lists,
@@ -49,23 +48,20 @@ export class DocumentLibraryBrowser extends React.Component<IDocumentLibraryBrow
   }
 
   public render(): React.ReactElement<IDocumentLibraryBrowserProps> {
-    if (this.state.isLoading) {
-      return (<Spinner label={strings.Loading} />);
-    }
-    const libraries: ILibrary[] = this.state.lists;
+
+    const { lists, isLoading } = this.state;
 
     return (
       <div className={styles.documentLibraryBrowserContainer}>
-        <FocusZone>
-          <List
-            className={styles.filePickerFolderCardGrid}
-            items={libraries}
-            getItemCountForPage={this._getItemCountForPage}
-            getPageHeight={this._getPageHeight}
-            renderedWindowsAhead={4}
-            onRenderCell={this._onRenderLibraryTile}
-          />
-        </FocusZone>
+        {isLoading && <Spinner label={strings.Loading} />}
+        <List
+          className={styles.filePickerFolderCardGrid}
+          items={lists}
+          getItemCountForPage={this._getItemCountForPage}
+          getPageHeight={this._getPageHeight}
+          renderedWindowsAhead={4}
+          onRenderCell={this._onRenderLibraryTile}
+        />
       </div>
     );
   }
@@ -119,7 +115,7 @@ export class DocumentLibraryBrowser extends React.Component<IDocumentLibraryBrow
   /**
    * Calls parent when library is opened
    */
-  private _handleOpenLibrary = (library: ILibrary) => {
+  private _handleOpenLibrary = (library: ILibrary): void => {
     this.props.onOpenLibrary(library);
   }
 }

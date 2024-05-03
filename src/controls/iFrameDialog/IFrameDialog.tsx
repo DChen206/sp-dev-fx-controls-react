@@ -1,12 +1,11 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { Dialog, IDialogContentProps, IDialogProps, IDialogStyleProps, IDialogStyles } from 'office-ui-fabric-react/lib/Dialog';
+import { Dialog, IDialogContentProps, IDialogProps, IDialogStyleProps, IDialogStyles } from '@fluentui/react/lib/Dialog';
 import { IFrameDialogContent } from './IFrameDialogContent';
 import * as telemetry from '../../common/telemetry';
 import { Guid } from "@microsoft/sp-core-library";
 import omit from 'lodash/omit';
 import merge from 'lodash/merge';
-import { IStyleFunctionOrObject } from "office-ui-fabric-react/lib/Utilities";
+import { IStyleFunctionOrObject } from "@fluentui/react/lib/Utilities";
 
 export interface IFrameDialogProps extends IDialogProps {
   /**
@@ -16,7 +15,7 @@ export interface IFrameDialogProps extends IDialogProps {
   /**
    * iframe's onload event handler
    */
-  iframeOnLoad?: (iframe: any) => void;
+  iframeOnLoad?: (iframe: HTMLIFrameElement) => void;
   /**
    * iframe width
    */
@@ -61,7 +60,7 @@ export interface IFrameDialogProps extends IDialogProps {
 }
 
 export interface IFrameDialogState {
-  dialogId: string | null;
+  dialogId: string | undefined;
   isStylingSet?: boolean;
 }
 
@@ -83,7 +82,7 @@ export class IFrameDialog extends React.Component<IFrameDialogProps, IFrameDialo
   /**
    * componentWillMount lifecycle hook
    */
-  public componentWillMount(): void {
+  public UNSAFE_componentWillMount(): void {
     this.setState({
       dialogId: `dialog-${Guid.newGuid().toString()}`
     });
@@ -96,7 +95,7 @@ export class IFrameDialog extends React.Component<IFrameDialogProps, IFrameDialo
     this.setDialogStyling();
   }
 
-  public componentWillReceiveProps(nextProps: IFrameDialogProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps: IFrameDialogProps): void {
     if (nextProps.hidden && nextProps.hidden !== this.props.hidden) {
       this.setState({
         isStylingSet: false
@@ -126,7 +125,7 @@ export class IFrameDialog extends React.Component<IFrameDialogProps, IFrameDialo
       className
     } = this.props;
 
-    let dlgModalProps = {
+    const dlgModalProps = {
       ...modalProps,
       onLayerDidMount: () => { this.setDialogStyling(); }
     };

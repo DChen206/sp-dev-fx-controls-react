@@ -6,7 +6,7 @@ import {
     tooltipAsLabelBehavior
 } from "@fluentui/react-northstar";
 import { cloneDeep } from "@microsoft/sp-lodash-subset";
-import { Icon } from "office-ui-fabric-react/lib/components/Icon/Icon";
+import { Icon } from "@fluentui/react/lib/components/Icon/Icon";
 import * as React from "react";
 import { TAction } from "../../common/model/TAction";
 import styles from "./Toolbar.module.scss";
@@ -28,7 +28,7 @@ const toolbarActionTooltipProps = (() => {
     return props;
 })();
 
-export const InFlowToolbarItem = ({ action, layout }: IInFlowToolbarItemProps) => {
+export const InFlowToolbarItem = ({ action, layout }: IInFlowToolbarItemProps): JSX.Element => {
     const { iconName, title } = action;
     const contentIcon = iconName && (
         <Box className={"extended-toolbar__near-side__item__icon " + styles.inFlowToolbarItemBox} >

@@ -2,8 +2,8 @@ import * as React from 'react';
 import styles from './Accordion.module.scss';
 import { IAccordionProps, IAccordionState } from './index';
 import { css } from "@uifabric/utilities/lib/css";
-import { DefaultButton } from 'office-ui-fabric-react/lib/components/Button';
-import { IIconProps } from 'office-ui-fabric-react/lib/Icon';
+import { DefaultButton } from '@fluentui/react/lib/components/Button';
+import { IIconProps } from '@fluentui/react/lib/Icon';
 import * as telemetry from '../../common/telemetry';
 
 /**
@@ -20,6 +20,9 @@ export class Accordion extends React.Component<IAccordionProps, IAccordionState>
     this.state = {
       expanded: !props.defaultCollapsed
     };
+
+    collapsedIcon.iconName = props.collapsedIcon || 'CheveronRight';
+    expandedIcon.iconName = props.expandedIcon || 'CheveronDown';
 
     telemetry.track('ReactAccordion', {});
   }
