@@ -216,6 +216,7 @@ export default class SPPeopleSearchService {
             const accountName: string = element.Description || "";
             const email: string = element.EntityData?.Email || element.Description;
             const secondaryText = element.EntityData?.Email || element.ProviderName;
+            const jobTitle: string = element.EntityData?.Title || "";
             switch (element.EntityType) {
               case 'User':
                 return {
@@ -224,8 +225,8 @@ export default class SPPeopleSearchService {
                   imageUrl: this.generateUserPhotoLink(accountName),
                   imageInitials: this.getFullNameInitials(element.DisplayText),
                   text: element.DisplayText, // name
-                  secondaryText: email, // email
-                  tertiaryText: "", // status
+                  secondaryText: jobTitle != "" ? jobTitle + " | " + email : email, // email
+                  tertiaryText: email, // status
                   optionalText: "" // anything
                 } as IPeoplePickerUserItem;
               case 'SecGroup':
