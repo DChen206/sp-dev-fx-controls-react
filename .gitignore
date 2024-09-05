@@ -8,6 +8,7 @@ node_modules
 
 # Build generated files
 dist
+lib
 solution
 temp
 *.sppkg
@@ -34,7 +35,11 @@ obj
 *.tgz
 
 # VSCode
-.vscode
+.vscode/*
+
+# Included VSCode files
+!.vscode/example-tasks.json
+!.vscode/example-launch.json
 
 # Documentation
 docs/documentation/site
@@ -42,3 +47,5 @@ docs/documentation/site
 # release
 release
 *.scss.d.ts
+
+.heft

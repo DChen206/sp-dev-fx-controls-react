@@ -7,6 +7,8 @@ src
 temp
 config
 typings
+lib/extensions
+lib/webparts
 assets
 dist
 docs
