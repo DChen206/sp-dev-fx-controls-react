@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IChartControlState, IChartControlProps } from '.';
+import { IChartControlState, IChartControlProps } from './ChartControl.types';
 export declare class ChartControl extends React.Component<IChartControlProps, IChartControlState> {
     /**
      * Sets default properties
@@ -23,7 +23,7 @@ export declare class ChartControl extends React.Component<IChartControlProps, IC
      *
      * @param nextProps
      */
-    componentWillReceiveProps(nextProps: IChartControlProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IChartControlProps): void;
     /**
      * componentWillUnmount lifecycle hook
      */

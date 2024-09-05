@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IDialogProps } from 'office-ui-fabric-react/lib/Dialog';
+import { IDialogProps } from '@fluentui/react/lib/Dialog';
 export interface IFrameDialogProps extends IDialogProps {
     /**
      * iframe Url
@@ -8,7 +8,7 @@ export interface IFrameDialogProps extends IDialogProps {
     /**
      * iframe's onload event handler
      */
-    iframeOnLoad?: (iframe: any) => void;
+    iframeOnLoad?: (iframe: HTMLIFrameElement) => void;
     /**
      * iframe width
      */
@@ -52,7 +52,7 @@ export interface IFrameDialogProps extends IDialogProps {
     seamless?: boolean;
 }
 export interface IFrameDialogState {
-    dialogId: string | null;
+    dialogId: string | undefined;
     isStylingSet?: boolean;
 }
 /**
@@ -63,12 +63,12 @@ export declare class IFrameDialog extends React.Component<IFrameDialogProps, IFr
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * componentDidMount lifecycle hook
      */
     componentDidMount(): void;
-    componentWillReceiveProps(nextProps: IFrameDialogProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IFrameDialogProps): void;
     componentDidUpdate(prevProps: IFrameDialogProps, prevState: IFrameDialogState): void;
     render(): JSX.Element;
     /**

@@ -1,6 +1,6 @@
 import { IFilePickerTab } from "../FilePicker.types";
 import { FileBrowserService } from "../../../services/FileBrowserService";
-import { IBreadcrumbItem } from "office-ui-fabric-react/lib/Breadcrumb";
+import { IBreadcrumbItem } from "@fluentui/react/lib/Breadcrumb";
 export interface ISiteFilePickerTabProps extends IFilePickerTab {
     fileBrowserService: FileBrowserService;
     /**
@@ -11,6 +11,18 @@ export interface ISiteFilePickerTabProps extends IFilePickerTab {
      * Specifies a default folder to be active in the Site Files tab
      */
     defaultFolderAbsolutePath?: string;
+    /**
+     * Title of the default site
+     */
+    webTitle?: string;
+    /**
+     * Id of the default site
+     */
+    webId?: string;
+    /**
+     * Absolute Url of the default site
+     */
+    webAbsoluteUrl?: string;
     includePageLibraries?: boolean;
 }
 //# sourceMappingURL=ISiteFilePickerTabProps.d.ts.map

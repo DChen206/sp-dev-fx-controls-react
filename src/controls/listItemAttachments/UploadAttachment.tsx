@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
-import { PrimaryButton, } from 'office-ui-fabric-react/lib/Button';
+import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { PrimaryButton, } from '@fluentui/react/lib/Button';
 import { IUploadAttachmentProps } from './IUploadAttachmentProps';
 import { IUploadAttachmentState } from './IUploadAttachmentState';
 import SPservice from "../../services/SPService";
 import * as strings from 'ControlStrings';
-import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { ProgressIndicator } from 'office-ui-fabric-react/lib/ProgressIndicator';
+import { CommandBar } from '@fluentui/react/lib/CommandBar';
+import { ProgressIndicator } from '@fluentui/react/lib/ProgressIndicator';
 import styles from './ListItemAttachments.module.scss';
 
 export class UploadAttachment extends React.Component<IUploadAttachmentProps, IUploadAttachmentState> {
@@ -45,7 +45,7 @@ export class UploadAttachment extends React.Component<IUploadAttachmentProps, IU
   /**
    * On attachment upload event
    */
-  private onAttachmentUpload = () => {
+  private onAttachmentUpload = (): void => {
     // fire click event
     this.fileInput.current.value = '';
     this.fileInput.current.click();
@@ -54,14 +54,14 @@ export class UploadAttachment extends React.Component<IUploadAttachmentProps, IU
   /**
    * Add a new attachment
    */
-  private addAttachment = (e: React.ChangeEvent<HTMLInputElement>) =>{
+  private addAttachment = (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     this.setState({
       isLoading: true
     });
 
     const reader = new FileReader();
     const file = e.target.files[0];
-    return new Promise<void>((resolve,errorCallback)=>{
+    return new Promise<void>((resolve, reject)=>{
       reader.onloadend = async () => {
 
         try {
@@ -80,7 +80,7 @@ export class UploadAttachment extends React.Component<IUploadAttachmentProps, IU
             isLoading: false,
             dialogMessage: strings.ListItemAttachmentsuploadAttachmentErrorMsg.replace('{0}', file.name).replace('{1}', error.message)
           });
-          errorCallback(error);
+          reject(error);
         }
         this._isFileExplorerOpen = false;
       };
@@ -92,7 +92,7 @@ export class UploadAttachment extends React.Component<IUploadAttachmentProps, IU
   /**
    * Close dialog
    */
-  private closeDialog = () => {
+  private closeDialog = (): void => {
     this.setState({
       hideDialog: true,
       dialogMessage: '',
@@ -102,7 +102,7 @@ export class UploadAttachment extends React.Component<IUploadAttachmentProps, IU
   /**
    * Default React render method
    */
-  public render() {
+  public render(): React.ReactElement<IUploadAttachmentProps> {
     return (
       <div>
         <input id="file-picker"

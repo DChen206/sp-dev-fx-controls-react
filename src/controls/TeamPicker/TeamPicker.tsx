@@ -6,7 +6,7 @@ import {
   IBasePickerSuggestionsProps,
   IPickerItemProps,
   ISuggestionItemProps,
-} from "office-ui-fabric-react/lib/Pickers";
+} from "@fluentui/react/lib/Pickers";
 
 import { useTeams } from "../../hooks";
 import { ITeam } from "../../common/model/ITeam";
@@ -14,15 +14,15 @@ import { ITeamPickerProps } from "./ITeamPickerProps";
 import { ITeamPickerState } from "./ITeamPickerState";
 import { TEAMS_SVG_LOGO } from "./constants";
 import { useTeamPickerStyles } from "./TeamPickerStyles";
-import { IconButton } from "office-ui-fabric-react/lib/Button";
-import { Text } from "office-ui-fabric-react/lib/Text";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
-import { Label } from "office-ui-fabric-react/lib/Label";
+import { IconButton } from "@fluentui/react/lib/Button";
+import { Text } from "@fluentui/react/lib/Text";
+import { Stack } from "@fluentui/react/lib/Stack";
+import { Label } from "@fluentui/react/lib/Label";
 
 import pullAllBy from "lodash/pullAllBy";
 import find from "lodash/find";
-import { ImageIcon } from "office-ui-fabric-react/lib/Icon";
-import { Customizer } from "office-ui-fabric-react/lib/Utilities";
+import { ImageIcon } from "@fluentui/react/lib/Icon";
+import { Customizer } from "@fluentui/react/lib/Utilities";
 import strings from "ControlStrings";
 const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
   suggestionsHeaderText: strings.TeamPickerSugestionsHeaderText,
@@ -31,12 +31,14 @@ const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
 const initialState: ITeamPickerState = {
   savedSelectedTeams: [],
 };
-const getTextFromItem = (item: ITag) => item.name;
+const getTextFromItem = (item: ITag): string => item.name;
 // Reducer to update state
 const reducer = (
   state: ITeamPickerState,
-  action: { type: string; payload: any }
-) => {
+  action: { type: string; payload: any } // eslint-disable-line @typescript-eslint/no-explicit-any
+): {
+  savedSelectedTeams: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+} => {
   switch (action.type) {
     case "UPDATE_SELECTEDITEM":
       return { ...state, savedSelectedTeams: action.payload };
@@ -72,7 +74,7 @@ export const TeamPicker: React.FunctionComponent<ITeamPickerProps> = (
 
   const useFilterSuggestedTeams = React.useCallback(
     async (filterText: string, teamsList: ITag[]): Promise<ITag[]> => {
-      let tags: ITag[] = [];
+      const tags: ITag[] = [];
       try {
         const teams: ITeam[] = await getMyTeams(filterText);
         if (teams?.length) {
@@ -120,7 +122,7 @@ export const TeamPicker: React.FunctionComponent<ITeamPickerProps> = (
                 width: 18,
                 height: 18,
               }}
-            ></ImageIcon>
+            />
 
             <Text variant="medium">{itemProps.item.name}</Text>
             <IconButton
@@ -170,7 +172,7 @@ export const TeamPicker: React.FunctionComponent<ITeamPickerProps> = (
               width: 18,
               height: 18,
             }}
-          ></ImageIcon>
+          />
           <Text variant="smallPlus">{propsTag.name}</Text>
         </Stack>
       );

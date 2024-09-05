@@ -1,4 +1,4 @@
-import { ICustomCollectionField } from "..";
+import { ICustomCollectionField } from "../ICustomCollectionField";
 export interface ICollectionIconFieldProps {
     field: ICustomCollectionField;
     item: any;

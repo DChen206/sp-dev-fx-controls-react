@@ -3,7 +3,8 @@ import { ISearchResult, BingQuerySearchParams, IRecentFile } from "./FilesSearch
 export declare class FilesSearchService {
     private context;
     private bingAPIKey;
-    constructor(context: BaseComponentContext, bingAPIKey: string);
+    private siteAbsoluteUrl;
+    constructor(context: BaseComponentContext, bingAPIKey: string, siteAbsoluteUrl?: string);
     /**
      * Checks if file exists
      */
@@ -11,7 +12,7 @@ export declare class FilesSearchService {
     /**
      * Executes Recent files search.
      */
-    executeRecentSearch: (accepts?: string[]) => Promise<IRecentFile[]>;
+    executeRecentSearch: (accepts?: string[]) => Promise<IRecentFile[] | undefined>;
     /**
      * Executes bing search for a file.
      */

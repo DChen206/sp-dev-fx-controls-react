@@ -37,12 +37,13 @@ export declare class GeneralHelper {
      * Creates Document element based on Xml string
      * @param xmlString XML string to parse
      */
-    static parseXml(xmlString: any): Document;
+    static parseXml(xmlString: string): Document;
     /**
      * Returns absoulute domain URL.
      * @param url
      */
     static getAbsoluteDomainUrl(url: string): string;
+    static getDomain(url: string, includeProtocol?: boolean): string;
     /**
      * To support IE11 that has no support for File constructor
      * @param blob
@@ -66,4 +67,7 @@ export declare class GeneralHelper {
 }
 export declare function urlCombine(urlStart: string, urlFinish: string, escapeFinish?: boolean): string;
 export declare const toRelativeUrl: (absoluteUrl: string) => string;
+export declare function sortString(a: string, b: string, isDesc: boolean): number;
+export declare function sortDate(a: string | number | Date, b: string | number | Date, isDesc: boolean): number;
+export declare function dateToNumber(date: string | number | Date): number;
 //# sourceMappingURL=GeneralHelper.d.ts.map

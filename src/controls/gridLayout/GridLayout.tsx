@@ -2,9 +2,9 @@ import * as React from 'react';
 import styles from './GridLayout.module.scss';
 
 // Used to render list grid
-import { FocusZone } from 'office-ui-fabric-react/lib/FocusZone';
-import { List } from 'office-ui-fabric-react/lib/List';
-import { IRectangle, ISize } from 'office-ui-fabric-react/lib/Utilities';
+import { FocusZone } from '@fluentui/react/lib/FocusZone';
+import { List } from '@fluentui/react/lib/List';
+import { IRectangle, ISize } from '@fluentui/react/lib/Utilities';
 
 import { IGridLayoutProps, IGridLayoutState } from './GridLayout.types';
 
@@ -93,7 +93,7 @@ export class GridLayout extends React.Component<IGridLayoutProps, IGridLayoutSta
   /**
    * Calls the passed onRenderCell
    */
-  private _onRenderCell = (item: any, index: number | undefined): JSX.Element => {
+  private _onRenderCell = (item: any, index: number | undefined): JSX.Element => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const isCompact: boolean = this._isCompact;
     const cellPadding: number = index % this._columnCount !== this._columnCount - 1 && !isCompact ? PADDING : 0;
     const finalSize: ISize = { width: this._columnWidth, height: this._rowHeight };

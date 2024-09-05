@@ -3,11 +3,16 @@
 import * as React from 'react';
 import { expect } from 'chai';
 import { mount, ReactWrapper } from 'enzyme';
-import { setIconOptions } from 'office-ui-fabric-react/lib/Styling';
+import { setIconOptions } from '@fluentui/react/lib/Styling';
 import { Placeholder } from './PlaceholderComponent';
-import styles from './PlaceholderComponent.module.scss';
+//import styles from './PlaceholderComponent.module.scss';
+import { getClassNames } from './PlaceholderComponent.styles';
+import { getFluentUIThemeOrDefault } from '../../common/utilities/ThemeUtility';
 
 declare const sinon;
+
+const themeToApply = getFluentUIThemeOrDefault();
+const styles = getClassNames(themeToApply);
 
 describe('<Placeholder />', () => {
   let placeholder: ReactWrapper;
@@ -83,9 +88,9 @@ describe('<Placeholder />', () => {
     placeholder = mount(<Placeholder description={dummyDescription} iconName={dummyIcon} iconText={dummyText} buttonLabel={dummyLabel} onConfigure={dummyOnConfigure} />);
 
     placeholder.find('button').simulate('click');
-    /* tslint:disable */
+    /* eslint-disable */
     expect(dummyOnConfigure.called).to.be.true;
-    /* tslint:enable */
+    /* eslint-enable */
 
     done();
   });

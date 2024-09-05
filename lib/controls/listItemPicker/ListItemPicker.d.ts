@@ -1,11 +1,13 @@
 import * as React from "react";
-import { IListItemPickerProps, IListItemPickerState } from ".";
+import { IListItemPickerProps } from "./IListItemPickerProps";
+import { IListItemPickerState } from "./IListItemPickerState";
 export declare class ListItemPicker extends React.Component<IListItemPickerProps, IListItemPickerState> {
     private _spservice;
     private _tagPickerId;
     constructor(props: IListItemPickerProps);
+    private ensureLoadField;
     componentDidMount(): void;
-    componentWillReceiveProps(nextProps: IListItemPickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IListItemPickerProps): void;
     /**
      * Render the field
      */

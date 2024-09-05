@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IRichTextPropertyPaneProps, IRichTextPropertyPaneState } from './RichTextPropertyPane.types';
+import { RangeStatic } from 'quill';
 export default class RichTextPropertyPane extends React.Component<IRichTextPropertyPaneProps, IRichTextPropertyPaneState> {
     constructor(props: IRichTextPropertyPaneProps);
     /**
@@ -16,7 +17,7 @@ export default class RichTextPropertyPane extends React.Component<IRichTextPrope
     /**
      * On selection changed event handler
      */
-    onChangeSelection: (range: any, oldRange?: any, source?: any) => void;
+    onChangeSelection: (range: RangeStatic, oldRange?: RangeStatic, source?: RangeStatic) => void;
     /**
      * Render the actions group
      */

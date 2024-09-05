@@ -6,13 +6,15 @@ import { GeneralHelper } from "../common/utilities/GeneralHelper";
 export class FileBrowserService {
   protected itemsToDownloadCount: number;
   protected context: BaseComponentContext;
+  protected siteAbsoluteUrl: string;
 
   protected driveAccessToken: string;
   protected mediaBaseUrl: string;
   protected callerStack: string;
 
-  constructor(context: BaseComponentContext, itemsToDownloadCount: number = 100) {
+  constructor(context: BaseComponentContext, itemsToDownloadCount: number = 100, siteAbsoluteUrl?: string) {
     this.context = context;
+    this.siteAbsoluteUrl = siteAbsoluteUrl || context.pageContext.web.absoluteUrl;
 
     this.itemsToDownloadCount = itemsToDownloadCount;
     this.driveAccessToken = null;
@@ -24,10 +26,10 @@ export class FileBrowserService {
    * @param folderPath
    * @param acceptedFilesExtensions
    */
-  public getListItems = async (listUrl: string, folderPath: string, acceptedFilesExtensions?: string[], nextPageQueryStringParams?: string): Promise<FilesQueryResult> => {
+  public getListItems = async (listUrl: string, folderPath: string, acceptedFilesExtensions?: string[], nextPageQueryStringParams?: string, sortBy?: string, isDesc?: boolean): Promise<FilesQueryResult> => {
     let filesQueryResult: FilesQueryResult = { items: [], nextHref: null };
     try {
-      let restApi = `${this.context.pageContext.web.absoluteUrl}/_api/web/GetList('${listUrl}')/RenderListDataAsStream`;
+      let restApi = `${this.siteAbsoluteUrl}/_api/web/GetList('${listUrl}')/RenderListDataAsStream`;
 
       // Do not pass FolderServerRelativeUrl as query parameter
       // Attach passed nextPageQueryStringParams values to REST URL
@@ -36,7 +38,7 @@ export class FileBrowserService {
         folderPath = null;
       }
 
-      filesQueryResult = await this._getListDataAsStream(restApi, folderPath, acceptedFilesExtensions);
+      filesQueryResult = await this._getListDataAsStream(restApi, folderPath, acceptedFilesExtensions, sortBy, isDesc);
     } catch (error) {
       filesQueryResult.items = null;
       console.error(error.message);
@@ -57,9 +59,9 @@ export class FileBrowserService {
   /**
    * Gets document and media libraries from the site
    */
-  public getSiteMediaLibraries = async (includePageLibraries: boolean = false) => {
+  public getSiteMediaLibraries = async (includePageLibraries: boolean = false): Promise<ILibrary[] | undefined> => {
     try {
-      const absoluteUrl = this.context.pageContext.web.absoluteUrl;
+      const absoluteUrl = this.siteAbsoluteUrl;
       const restApi = `${absoluteUrl}/_api/SP.Web.GetDocumentAndMediaLibraries?webFullUrl='${encodeURIComponent(absoluteUrl)}'&includePageLibraries='${includePageLibraries}'`;
       const mediaLibrariesResult = await this.context.spHttpClient.get(restApi, SPHttpClient.configurations.v1);
 
@@ -75,7 +77,7 @@ export class FileBrowserService {
       return result;
     } catch (error) {
       console.error(`[FileBrowserService.getSiteMediaLibraries]: Err='${error.message}'`);
-      return null;
+      return undefined;
     }
   }
 
@@ -84,7 +86,7 @@ export class FileBrowserService {
    */
   public getLibraryNameByInternalName = async (internalName: string): Promise<string> => {
     try {
-      const absoluteUrl = this.context.pageContext.web.absoluteUrl;
+      const absoluteUrl = this.siteAbsoluteUrl;
       const restApi = `${absoluteUrl}/_api/web/GetFolderByServerRelativeUrl('${internalName}')/Properties?$select=vti_x005f_listtitle`;
       const libraryResult = await this.context.spHttpClient.get(restApi, SPHttpClient.configurations.v1);
 
@@ -96,7 +98,7 @@ export class FileBrowserService {
         throw new Error(`Cannot read data from the results.`);
       }
 
-      return libResults.vti_x005f_listtitle != internalName && libResults.vti_x005f_listtitle || "";
+      return libResults.vti_x005f_listtitle !== internalName && libResults.vti_x005f_listtitle || "";
     } catch (error) {
       console.error(`[FileBrowserService.getSiteLibraryNameByInternalName]: Err='${error.message}'`);
       return null;
@@ -124,12 +126,78 @@ export class FileBrowserService {
   }
 
   /**
+   * Maps IFile property name to SharePoint item field name
+   * @param filePropertyName File Property
+   * @returns SharePoint Field Name
+   */
+  public getSPFieldNameForFileProperty(filePropertyName: string): string {
+    let fieldName = '';
+    switch (filePropertyName) {
+      case 'fileIcon':
+        fieldName = 'DocIcon';
+        break;
+      case 'serverRelativeUrl':
+        fieldName = 'FileRef';
+        break;
+      case 'modified':
+      case 'modifiedDate':
+        fieldName = 'Modified';
+        break;
+      case 'fileSize':
+        fieldName = 'File_x0020_Size';
+        break;
+      case 'fileType':
+        fieldName = 'File_x0020_Type';
+        break;
+      case 'modifiedBy':
+        fieldName = 'Editor';
+        break;
+    }
+
+    return fieldName;
+  }
+
+  /**
+   * Gets the Title of the current Web
+   * @returns SharePoint Site Title
+   */
+  public getSiteTitle = async (): Promise<string> => {
+    const restApi = `${this.siteAbsoluteUrl}/_api/web?$select=Title`;
+    const webResult = await this.context.spHttpClient.get(restApi, SPHttpClient.configurations.v1);
+
+    if (!webResult || !webResult.ok) {
+      throw new Error(`Something went wrong when executing request. Status='${webResult.status}'`);
+    }
+    if (!webResult || !webResult) {
+      throw new Error(`Cannot read data from the results.`);
+    }
+    const webJson = await webResult.json();
+    return webJson.Title;
+
+  }
+
+  public getSiteTitleAndId = async (): Promise<{ title: string, id: string }> => {
+    const restApi = `${this.siteAbsoluteUrl}/_api/web?$select=Title,Id`;
+    const webResult = await this.context.spHttpClient.get(restApi, SPHttpClient.configurations.v1);
+
+    if (!webResult || !webResult.ok) {
+      throw new Error(`Something went wrong when executing request. Status='${webResult.status}'`);
+    }
+    if (!webResult || !webResult) {
+      throw new Error(`Cannot read data from the results.`);
+    }
+    const webJson = await webResult.json();
+    return { title: webJson.Title, id: webJson.Id };
+
+  }
+
+  /**
    * Executes query to load files with possible extension filtering
    * @param restApi
    * @param folderPath
    * @param acceptedFilesExtensions
    */
-  protected _getListDataAsStream = async (restApi: string, folderPath: string, acceptedFilesExtensions?: string[]): Promise<FilesQueryResult> => {
+  protected _getListDataAsStream = async (restApi: string, folderPath: string, acceptedFilesExtensions?: string[], sortBy?: string, isDesc?: boolean): Promise<FilesQueryResult> => {
     let filesQueryResult: FilesQueryResult = { items: [], nextHref: null };
     try {
       const body = {
@@ -137,12 +205,14 @@ export class FileBrowserService {
           AllowMultipleValueFilterForTaxonomyFields: true,
           // ContextInfo (1), ListData (2), ListSchema (4), ViewMetadata (1024), EnableMediaTAUrls (4096), ParentInfo (8192)
           RenderOptions: 1 | 2 | 4 | 1024 | 4096 | 8192,
-          ViewXml: this.getFilesCamlQueryViewXml(acceptedFilesExtensions)
+          ViewXml: this.getFilesCamlQueryViewXml(acceptedFilesExtensions, sortBy || 'FileLeafRef', !!isDesc)
         }
       };
       if (folderPath) {
+        // eslint-disable-next-line dot-notation
         body.parameters["FolderServerRelativeUrl"] = folderPath;
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data: any = await this.context.spHttpClient.fetch(restApi, SPHttpClient.configurations.v1, {
         method: "POST",
         body: JSON.stringify(body)
@@ -165,7 +235,7 @@ export class FileBrowserService {
         nextHref: filesResult.ListData.NextHref
       };
     } catch (error) {
-      filesQueryResult.items = null;
+      filesQueryResult.items = undefined;
       console.error(error.message);
     }
     return filesQueryResult;
@@ -175,7 +245,7 @@ export class FileBrowserService {
    * Generates CamlQuery files filter.
    * @param accepts
    */
-  protected getFileTypeFilter(accepts: string[]) {
+  protected getFileTypeFilter(accepts: string[]): string {
     let fileFilter: string = "";
 
     if (accepts && accepts.length > 0) {
@@ -195,9 +265,9 @@ export class FileBrowserService {
   /**
    * Generates Files CamlQuery ViewXml
    */
-  protected getFilesCamlQueryViewXml = (accepts: string[]) => {
+  protected getFilesCamlQueryViewXml = (accepts: string[], sortBy: string, isDesc: boolean): string => {
     const fileFilter: string = this.getFileTypeFilter(accepts);
-    let queryCondition = fileFilter && fileFilter != "" ?
+    const queryCondition = fileFilter && fileFilter !== "" ?
       `<Query>
         <Where>
           <Or>
@@ -217,8 +287,8 @@ export class FileBrowserService {
             </In>
           </Or>
         </Where>
-        <OrderBy><FieldRef Name="FileLeafRef" /></OrderBy>
-      </Query>` : `<Query><OrderBy><FieldRef Name="FileLeafRef" /></OrderBy></Query>`;
+        <OrderBy><FieldRef Name="${sortBy}" Ascending="${isDesc ? 'False' : 'True'}" /></OrderBy>
+      </Query>` : `<Query><OrderBy><FieldRef Name="${sortBy}" Ascending="${isDesc ? 'False' : 'True'}" /></OrderBy></Query>`;
 
     // Add files types condiiton
     const viewXml = `<View>
@@ -247,11 +317,11 @@ export class FileBrowserService {
   /**
    * Converts REST call results to IFile
    */
-  protected parseFileItem = (fileItem: any): IFile => {
+  protected parseFileItem = (fileItem: any): IFile => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const modifiedFriendly: string = fileItem["Modified.FriendlyDisplay"];
 
     // Get the modified date
-    const modifiedParts: string[] = modifiedFriendly!.split('|');
+    const modifiedParts: string[] = modifiedFriendly.split('|');
     let modified: string = fileItem.Modified;
 
     // If there is a friendly modified date, use that
@@ -264,9 +334,10 @@ export class FileBrowserService {
       fileIcon: fileItem.DocIcon,
       serverRelativeUrl: fileItem.FileRef,
       modified: modified,
+      modifiedDate: new Date(fileItem.Modified),
       fileSize: fileItem.File_x0020_Size,
       fileType: fileItem.File_x0020_Type,
-      modifiedBy: fileItem.Editor![0]!.title,
+      modifiedBy: fileItem.Editor[0].title,
       isFolder: fileItem.FSObjType === "1",
       absoluteUrl: this.buildAbsoluteUrl(fileItem.FileRef),
 
@@ -277,7 +348,7 @@ export class FileBrowserService {
     return file;
   }
 
-  protected parseLibItem = (libItem: any, webUrl: string): ILibrary => {
+  protected parseLibItem = (libItem: any, webUrl: string): ILibrary => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const library: ILibrary = {
       title: libItem.Title,
       absoluteUrl: libItem.AbsoluteUrl,
@@ -291,12 +362,12 @@ export class FileBrowserService {
   /**
    * Creates an absolute URL
    */
-  protected buildAbsoluteUrl = (relativeUrl: string) => {
-    const siteUrl: string = GeneralHelper.getAbsoluteDomainUrl(this.context.pageContext.web.absoluteUrl);
+  protected buildAbsoluteUrl = (relativeUrl: string): string => {
+    const siteUrl: string = GeneralHelper.getAbsoluteDomainUrl(this.siteAbsoluteUrl);
     return `${siteUrl}${relativeUrl.indexOf('/') === 0 ? '' : '/'}${relativeUrl}`;
   }
 
-  protected processResponse = (fileResponse: any): void => {
+  protected processResponse = (fileResponse: any): void => { // eslint-disable-line @typescript-eslint/no-explicit-any
     // Extract media base URL
     this.mediaBaseUrl = fileResponse.ListSchema[".mediaBaseUrl"];
     this.callerStack = fileResponse.ListSchema[".callerStack"];

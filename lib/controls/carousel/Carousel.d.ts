@@ -1,5 +1,6 @@
 import * as React from "react";
-import { ICarouselProps, ICarouselState } from ".";
+import { ICarouselProps } from "./ICarouselProps";
+import { ICarouselState } from "./ICarouselState";
 export declare class Carousel extends React.Component<ICarouselProps, ICarouselState> {
     private _intervalId;
     constructor(props: ICarouselProps);

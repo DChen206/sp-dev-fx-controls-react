@@ -4,11 +4,12 @@ import * as telemetry from '../../common/telemetry';
 import styles from './PeoplePickerComponent.module.scss';
 import SPPeopleSearchService from "../../services/PeopleSearchService";
 import { IPeoplePickerProps, IPeoplePickerState } from './IPeoplePicker';
-import { TooltipHost, DirectionalHint } from 'office-ui-fabric-react/lib/Tooltip';
-import { NormalPeoplePicker } from 'office-ui-fabric-react/lib/components/pickers/PeoplePicker/PeoplePicker';
-import { Label } from 'office-ui-fabric-react/lib/components/Label';
-import { IBasePickerSuggestionsProps } from "office-ui-fabric-react/lib/components/pickers/BasePicker.types";
-import { IPersonaProps } from "office-ui-fabric-react/lib/components/Persona/Persona.types";
+import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { DirectionalHint } from '@fluentui/react/lib/Callout';
+import { NormalPeoplePicker } from '@fluentui/react/lib/components/pickers/PeoplePicker/PeoplePicker';
+import { Label } from '@fluentui/react/lib/components/Label';
+import { IBasePickerSuggestionsProps } from "@fluentui/react/lib/components/pickers/BasePicker.types";
+import { IPersonaProps } from "@fluentui/react/lib/components/Persona/Persona.types";
 import FieldErrorMessage from '../errorMessage/ErrorMessage';
 import isEqual from 'lodash/isEqual';
 import uniqBy from 'lodash/uniqBy';
@@ -19,13 +20,15 @@ import uniqBy from 'lodash/uniqBy';
 export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePickerState> {
   private peopleSearchService: SPPeopleSearchService;
   private suggestionsLimit: number;
-  private groupId: number;
+  private groupId: number | string | (string | number)[];
+  private searchTextCount: number;
 
   constructor(props: IPeoplePickerProps) {
     super(props);
 
     this.peopleSearchService = new SPPeopleSearchService(props.context);
     this.suggestionsLimit = this.props.suggestionsLimit ? this.props.suggestionsLimit : 5;
+    this.searchTextCount = this.props.searchTextLimit ? this.props.searchTextLimit : 2;
 
     telemetry.track('ReactPeoplePicker', {
       groupName: !!props.groupName,
@@ -45,24 +48,36 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
   /**
    * componentWillMount lifecycle hook
    */
-  public componentWillMount(): void {
-    this.getInitialPersons(this.props);
+  public UNSAFE_componentWillMount(): void {
+    this.getInitialPersons(this.props)
+      .then(() => {
+        // no-op;
+      })
+      .catch(() => {
+        // no-op;
+      });
   }
 
 
   /**
    * componentWillUpdate lifecycle hook
    */
-  public componentWillUpdate(nextProps: IPeoplePickerProps, nextState: IPeoplePickerState): void {
+  public UNSAFE_componentWillUpdate(nextProps: IPeoplePickerProps, nextState: IPeoplePickerState): void {
     if (!isEqual(this.props.defaultSelectedUsers, nextProps.defaultSelectedUsers) ||
       this.props.groupName !== nextProps.groupName ||
       this.props.webAbsoluteUrl !== nextProps.webAbsoluteUrl ||
       this.peopleSearchService.getSumOfPrincipalTypes(this.props.principalTypes) !== this.peopleSearchService.getSumOfPrincipalTypes(nextProps.principalTypes)) {
-      this.getInitialPersons(nextProps);
+      this.getInitialPersons(nextProps)
+        .then(() => {
+          // no-op;
+        })
+        .catch(() => {
+          // no-op;
+        });
     }
   }
 
-  public componentWillReceiveProps(nextProps: IPeoplePickerProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps: IPeoplePickerProps): void {
     if (nextProps.errorMessage !== this.props.errorMessage) {
       this.setState({
         errorMessage: nextProps.errorMessage
@@ -74,8 +89,8 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
   /**
    * Get initial persons
    */
-  private async getInitialPersons(props: IPeoplePickerProps) {
-    const { groupName, groupId, webAbsoluteUrl, defaultSelectedUsers, ensureUser, principalTypes } = props;
+  private async getInitialPersons(props: IPeoplePickerProps): Promise<void> {
+    const { groupName, groupId, webAbsoluteUrl, defaultSelectedUsers, ensureUser, allowUnvalidated, principalTypes } = props;
     // Check if a group property was provided, and get the group ID
     if (groupName) {
       this.groupId = await this.peopleSearchService.getGroupId(groupName, webAbsoluteUrl);
@@ -93,7 +108,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
 
     // Check for default user values
     if (defaultSelectedUsers) {
-      let selectedPersons: IPersonaProps[] = [];
+      const selectedPersons: IPersonaProps[] = [];
       for (const userValue of props.defaultSelectedUsers) {
         let valueAndTitle: string[] = [];
         valueAndTitle.push(userValue);
@@ -101,7 +116,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
           valueAndTitle = userValue.split('/');
         }
 
-        const userResult = await this.peopleSearchService.searchPersonByEmailOrLogin(valueAndTitle[0], principalTypes, webAbsoluteUrl, this.groupId, ensureUser);
+        const userResult = await this.peopleSearchService.searchPersonByEmailOrLogin(valueAndTitle[0], principalTypes, webAbsoluteUrl, this.groupId, ensureUser, allowUnvalidated);
         if (userResult) {
           selectedPersons.push(userResult);
         }
@@ -123,11 +138,17 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
    * A search field change occured
    */
   private onSearchFieldChanged = async (searchText: string, currentSelected: IPersonaProps[]): Promise<IPersonaProps[]> => {
-    if (searchText.length > 2) {
-      const results = await this.peopleSearchService.searchPeople(searchText, this.suggestionsLimit, this.props.principalTypes, this.props.webAbsoluteUrl, this.groupId, this.props.ensureUser);
+    if (searchText.length > this.searchTextCount) {
+      const results = await this.peopleSearchService.searchPeople(searchText, this.suggestionsLimit, this.props.principalTypes, this.props.webAbsoluteUrl, this.groupId, this.props.ensureUser, this.props.allowUnvalidated);
       // Remove duplicates
       const { selectedPersons, mostRecentlyUsedPersons } = this.state;
-      const filteredPersons = this.removeDuplicates(results, selectedPersons);
+      let filteredPersons = this.removeDuplicates(results, selectedPersons);
+
+      // If a resultFilter is provided apply the filter to the results
+      if (this.props.resultFilter !== undefined && filteredPersons.length > 0) {
+        filteredPersons = this.props.resultFilter(filteredPersons);
+      }
+
       // Add the users to the most recently used ones
       let recentlyUsed = [...filteredPersons, ...mostRecentlyUsedPersons];
       recentlyUsed = uniqBy(recentlyUsed, "text");
@@ -149,7 +170,29 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
       selectedPersons: items
     });
 
-    this.validate(items);
+    this.validate(items)
+      .then(() => {
+        // no-op;
+      })
+      .catch(() => {
+        // no-op;
+      });
+  }
+
+  /**
+   * On blur UI event
+   * @param ev
+   */
+  private onBlur = (ev): void => {
+    if (this.props.validateOnFocusOut) {
+      this.validate(this.state.selectedPersons)
+        .then(() => {
+          // no-op;
+        })
+        .catch(() => {
+          // no-op;
+        });
+    }
   }
 
 
@@ -159,7 +202,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
    * @param currentPersonas
    */
   private returnMostRecentlyUsedPerson = (currentPersonas: IPersonaProps[]): IPersonaProps[] => {
-    let { mostRecentlyUsedPersons } = this.state;
+    const { mostRecentlyUsedPersons } = this.state;
     return this.removeDuplicates(mostRecentlyUsedPersons, currentPersonas);
   }
 
@@ -185,6 +228,10 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
 
     if (!result) {
       this.validated(items);
+
+      this.setState({
+        errorMessage: undefined
+      });
       return;
     }
 
@@ -242,7 +289,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     if (!personas || !personas.length || personas.length === 0) {
       return false;
     }
-    return personas.filter(item => item.text === persona.text).length > 0;
+    return personas.some(item => item.text === persona.text && item.secondaryText === persona.secondaryText);
   }
 
 
@@ -287,6 +334,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
         {titleText && <Label required={required}>{titleText}</Label>}
 
         <NormalPeoplePicker pickerSuggestionsProps={suggestionProps}
+          styles={this.props.styles ?? undefined}
           onResolveSuggestions={this.onSearchFieldChanged}
           onEmptyInputFocus={this.returnMostRecentlyUsedPerson}
           getTextFromItem={(peoplePersonaMenu: IPersonaProps) => peoplePersonaMenu.text}
@@ -301,6 +349,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
           itemLimit={personSelectionLimit || 1}
           disabled={disabled || !!internalErrorMessage}
           onChange={this.onChange}
+          onBlur={this.onBlur}
           resolveDelay={resolveDelay} />
       </div>
     );
@@ -316,10 +365,10 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
               {peoplepicker}
             </TooltipHost>
           ) : (
-              <div>
-                {peoplepicker}
-              </div>
-            )
+            <div>
+              {peoplepicker}
+            </div>
+          )
         }
         <FieldErrorMessage errorMessage={errorMessage || internalErrorMessage} className={errorMessageClassName} />
       </div>

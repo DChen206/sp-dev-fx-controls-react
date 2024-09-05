@@ -1,4 +1,4 @@
-import { ErrorMsg } from ".";
+import { ErrorMsg } from "./ErrorMsg";
 export interface ICollectionDataItemState {
     crntItem: any;
     errorMsgs?: ErrorMsg[];

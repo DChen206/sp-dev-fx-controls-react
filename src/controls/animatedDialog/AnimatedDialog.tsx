@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useEffect, useState } from 'react';
 import styles from './AnimatedDialog.module.scss';
-import { Dialog, IDialogProps, IDialogContentProps } from 'office-ui-fabric-react/lib/Dialog';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { DefaultButton, PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { Dialog, IDialogProps, IDialogContentProps } from '@fluentui/react/lib/Dialog';
+import { Icon } from '@fluentui/react/lib/Icon';
+import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
 // Animate.min.css
 //require('../../../node_modules/animate.css/animate.min.css');
@@ -28,7 +28,7 @@ const mainAnimationClass: string = `${animationPrefix}animated`;
 const defaultDialogAnimationClass: string = `${animationPrefix}bounceIn`;
 const defaultIconAnimationClass: string = `${animationPrefix}zoomIn`;
 
-export function AnimatedDialog(props: React.PropsWithChildren<IAnimatedDialogProps>) {
+export function AnimatedDialog(props: React.PropsWithChildren<IAnimatedDialogProps>): JSX.Element {
 
     const [dialogProps, setDialogProps] = useState<IDialogProps>(props);
     const [animatedDialogContentProps, setAnimatedDialogContentProps] = useState<IDialogContentProps>(props.dialogContentProps);

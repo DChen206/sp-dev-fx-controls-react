@@ -1,6 +1,6 @@
 import { Version } from '@microsoft/sp-core-library';
-import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IControlsTestWebPartProps } from './IControlsTestWebPartProps';
 /**
  * Web part to test the React controls
@@ -8,6 +8,7 @@ import { IControlsTestWebPartProps } from './IControlsTestWebPartProps';
 export default class ControlsTestWebPart extends BaseClientSideWebPart<IControlsTestWebPartProps> {
     private _themeProvider;
     private _themeVariant;
+    private _containerWidth;
     protected onInit(): Promise<void>;
     /**
      * Update the current theme variant reference and re-render.
@@ -18,6 +19,7 @@ export default class ControlsTestWebPart extends BaseClientSideWebPart<IControls
     private _applyTheme;
     render(): void;
     protected get dataVersion(): Version;
+    protected onAfterResize(newWidth: number): void;
     protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration;
 }
 //# sourceMappingURL=ControlsTestWebPart.d.ts.map

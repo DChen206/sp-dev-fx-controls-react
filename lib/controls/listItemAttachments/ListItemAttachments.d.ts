@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IListItemAttachmentFile } from './IListItemAttachmentFile';
-import { IListItemAttachmentsProps } from '.';
-import { IListItemAttachmentsState } from '.';
+import { IListItemAttachmentsProps } from './IListItemAttachmentsProps';
+import { IListItemAttachmentsState } from './IListItemAttachmentsState';
 export declare class ListItemAttachments extends React.Component<IListItemAttachmentsProps, IListItemAttachmentsState> {
     private _spservice;
     private previewImages;
@@ -39,6 +39,6 @@ export declare class ListItemAttachments extends React.Component<IListItemAttach
     /**
      * Default React render method
      */
-    render(): JSX.Element;
+    render(): React.ReactElement<IListItemAttachmentsProps>;
 }
 //# sourceMappingURL=ListItemAttachments.d.ts.map

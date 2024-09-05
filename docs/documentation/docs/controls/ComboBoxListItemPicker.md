@@ -25,6 +25,7 @@ import { ComboBoxListItemPicker } from '@pnp/spfx-controls-react/lib/ListItemPic
 ```TypeScript
 <ComboBoxListItemPicker listId='da8daf15-d84f-4ab1-9800-7568f82fed3f'
                         columnInternalName='Title'
+                        orderBy='Title asc'
                         keyColumnInternalName='Id'
                         filter="Title eq 'SPFx'"
                         onSelectedItem={this.onSelectedItem}
@@ -39,7 +40,7 @@ import { ComboBoxListItemPicker } from '@pnp/spfx-controls-react/lib/ListItemPic
                         columnInternalName='Title'
                         keyColumnInternalName='Id'
                         filter="Title eq 'SPFx'"
-                        defaultSelectedItems=[{Id: 2, Title:"Test"}]
+                        defaultSelectedItems={[{Id: 2, Title:"Test"}]}
                         onSelectedItem={this.onSelectedItem}
                         webUrl={this.context.pageContext.web.absoluteUrl}
                         spHttpClient={this.context.spHttpClient} />
@@ -111,8 +112,8 @@ The `ComboBoxListItemPicker` control can be configured with the following proper
 | keyColumnInternalName | string | no | InternalName of column to use as the key for the selection. Must be a column with unique values. Default: Id |
 | webUrl | string | yes | Url to web hosting list |
 | spHttpClient | RequestClient | yes | Any implementation of PnPJS RequestClient |
-| listId | string | yes | Guid of the list. |
-| onSelectItem | (items: any[]) => void | yes | Callback function which returns the selected items. |
+| listId | string | yes | Guid or title of the list. |
+| onSelectedItem | (items: any[]) => void | yes | Callback function which returns the selected items. |
 | className | string | no | ClassName for the picker. |
 | defaultSelectedItems | any[] | no | Initial items that have already been selected and should appear in the people picker. Support objects and Ids only |
 | suggestionsHeaderText | string | no | The text that should appear at the top of the suggestion box. |
@@ -123,5 +124,6 @@ The `ComboBoxListItemPicker` control can be configured with the following proper
 | onInitialized | () => void | no | Calls when component is ready|
 | itemLimit | number | no | Maximum number of items to be displayed in the combobox. Default: 100 |
 | label | string | no | Specifies the text describing the combobox ListItemPicker. |
+| orderBy | string | no | Specifies the sequence of the items in the comboBox ,same as $orderBy ODATA parameter|
 
 ![](https://telemetry.sharepointpnp.com/sp-dev-fx-controls-react/wiki/controls/ComboBoxListItemPicker)

@@ -1,5 +1,6 @@
 import { ITreeItem } from './ITreeItem';
-import { IIconProps } from 'office-ui-fabric-react/lib/Icon';
+import { IIconProps } from '@fluentui/react/lib/Icon';
+import { ITheme } from '@fluentui/react/lib/Styling';
 /**
  * Specifies the display mode of the tree item action.
  */
@@ -36,6 +37,10 @@ export interface ITreeItemActionsControlProps {
      * Callback after execution of tree item action.
      */
     treeItemActionCallback: () => void;
+    /**
+    * Set Fluent UI Theme.
+    * */
+    theme: ITheme;
 }
 /**
  * TreeItemActionsControl state interface
@@ -66,6 +71,10 @@ export interface IConcreteTreeItemActionProps {
      * Method to be executed when action is fired.
      */
     treeItemActionCallback: () => void;
+    /**
+    * Set Fluent UI Theme.v
+    * */
+    theme: ITheme;
 }
 /**
  * Interface represents the possible action that could be execute on tree item level.

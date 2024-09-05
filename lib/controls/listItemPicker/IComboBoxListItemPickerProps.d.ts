@@ -1,12 +1,15 @@
-import { IComboBoxOptionStyles } from "office-ui-fabric-react/lib/components/ComboBox";
-import { IAutofillProps } from "office-ui-fabric-react/lib/components/Autofill";
-import { IKeytipProps } from "office-ui-fabric-react/lib/components/Keytip";
+import { IComboBoxOptionStyles, IComboBoxStyles } from "@fluentui/react/lib/components/ComboBox";
+import { IAutofillProps } from "@fluentui/react/lib/components/Autofill";
+import { IKeytipProps } from "@fluentui/react/lib/components/Keytip";
 import { SPHttpClient } from '@microsoft/sp-http';
 export interface IComboBoxListItemPickerProps {
     autoComplete?: "on" | "off";
     autofill?: IAutofillProps;
     comboBoxOptionStyles?: Partial<IComboBoxOptionStyles>;
     allowFreeform?: boolean;
+    /**
+     * @deprecated
+     */
     keytipProps?: IKeytipProps;
     multiSelect?: boolean;
     onMenuDismiss?: () => void;
@@ -27,5 +30,7 @@ export interface IComboBoxListItemPickerProps {
     onInitialized?: () => void;
     onSelectedItem: (item: any) => void;
     label?: string;
+    orderBy?: string;
+    styles?: IComboBoxStyles;
 }
 //# sourceMappingURL=IComboBoxListItemPickerProps.d.ts.map

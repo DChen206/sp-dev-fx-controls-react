@@ -7,15 +7,11 @@ export declare class DropdownTreeItemAction extends React.Component<IConcreteTre
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * Prepates contextual menu items for dropdown.
      */
     private prepareContextualMenuProps;
-    /**
-     * Prepare treeItem action button style.
-     */
-    private getTreeItemActionActionButtonStyle;
     /**
      * Check if there are action to immediatly invoke
      */

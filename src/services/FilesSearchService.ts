@@ -1,8 +1,10 @@
 import { BaseComponentContext } from '@microsoft/sp-component-base';
-import { SPHttpClient } from "@microsoft/sp-http";
+import { SPHttpClient, HttpClientResponse } from "@microsoft/sp-http";
 import { ISearchResult, BingQuerySearchParams, IRecentFile } from "./FilesSearchService.types";
-import { find } from "office-ui-fabric-react/lib/Utilities";
+import { find } from "@fluentui/react/lib/Utilities";
 import { GeneralHelper } from "../common/utilities/GeneralHelper";
+import type { IBingSearchResult } from '../controls/filePicker/WebSearchTab/IBingSearchResult';
+import { getSiteWebInfo } from './SPSitesService';
 
 /**
  * Maximum file size when searching
@@ -17,10 +19,12 @@ const MAXRESULTS = 100;
 export class FilesSearchService {
   private context: BaseComponentContext;
   private bingAPIKey: string;
+  private siteAbsoluteUrl: string;
 
-  constructor(context: BaseComponentContext, bingAPIKey: string) {
+  constructor(context: BaseComponentContext, bingAPIKey: string, siteAbsoluteUrl?: string) {
     this.context = context;
     this.bingAPIKey = bingAPIKey;
+    this.siteAbsoluteUrl = siteAbsoluteUrl || context.pageContext.web.absoluteUrl
   }
 
   /**
@@ -48,10 +52,15 @@ export class FilesSearchService {
   /**
    * Executes Recent files search.
    */
-  public executeRecentSearch = async (accepts?: string[]) => {
+  public executeRecentSearch = async (accepts?: string[]): Promise<IRecentFile[] | undefined> => {
     try {
-      const webId = this.context.pageContext.web.id.toString();
-      const siteId = this.context.pageContext.site.id.toString();
+      let webId = this.context.pageContext.web.id.toString();
+      let siteId = this.context.pageContext.site.id.toString();
+      if (this.siteAbsoluteUrl !== this.context.pageContext.web.absoluteUrl) {
+        const siteinfo = await getSiteWebInfo(this.context, this.siteAbsoluteUrl);
+        webId = siteinfo.webId;
+        siteId = siteinfo.siteId;
+      }
       const fileFilter = this._getFileFilter(accepts);
 
       const queryTemplate: string = `((SiteID:${siteId} OR SiteID: {${siteId}}) AND (WebId: ${webId} OR WebId: {${webId}})) AND LastModifiedTime < {Today} AND -Title:OneNote_DeletedPages AND -Title:OneNote_RecycleBin${fileFilter}`;
@@ -95,7 +104,7 @@ export class FilesSearchService {
           ]
         }
       };
-      const searchApi = `${this.context.pageContext.web.absoluteUrl}/_api/search/postquery`;
+      const searchApi = `${this.siteAbsoluteUrl}/_api/search/postquery`;
 
       const recentSearchDataResult = await this.context.spHttpClient.post(searchApi, SPHttpClient.configurations.v1, {
         headers: {
@@ -120,7 +129,7 @@ export class FilesSearchService {
       return recentFilesResult;
     } catch (err) {
       console.error(`[BingFilesService.executeRecentSearch]: Err='${err.message}'`);
-      return null;
+      return undefined;
     }
   }
 
@@ -143,15 +152,18 @@ export class FilesSearchService {
       }
 
       // Submit the request
-      const apiUrl: string = `https://www.bingapis.com/api/v7/images/search?appid=${this.bingAPIKey}&traffictype=Internal_monitor&q=${encodeURIComponent(query)}&count=${maxResults}&aspect=${aspect}&maxFileSize=${maxFileSize}&size=${size}&mkt=en-US&license=${license}`;
+      const apiUrl: string = `https://api.bing.microsoft.com/v7.0/images/search?q=${encodeURIComponent(query)}&count=${maxResults}&aspect=${aspect}&maxFileSize=${maxFileSize}&size=${size}&mkt=en-US&license=${license}`;
 
-      const searchDataResponse: any = await this.context.httpClient.get(apiUrl, SPHttpClient.configurations.v1, {
+      const searchDataResponse: HttpClientResponse = await this.context.httpClient.get(apiUrl, SPHttpClient.configurations.v1, {
         method: 'GET',
-        mode: 'cors'
+        mode: 'cors',
+        headers: {
+          'Ocp-Apim-Subscription-Key': this.bingAPIKey,
+        }
       });
 
       if (!searchDataResponse || !searchDataResponse.ok) {
-        throw new Error(`Something went wrong when executing search query. Status='${searchDataResponse.statusMessage}'`);
+        throw new Error(`Something went wrong when executing search query. Status='${searchDataResponse.statusText}'`);
       }
       const searchData = await searchDataResponse.json();
       if (!searchData || !searchData.value) {
@@ -214,17 +226,18 @@ export class FilesSearchService {
   /**
    * Parses Recent Search results.
    */
-  private parseRecentSearchResult = (cells: Array<any>) => {
-    const titleCell = find(cells, x => x.Key == "Title");
-    const keyCell = find(cells, x => x.Key == "UniqueID");
-    const fileUrlCell = find(cells, x => x.Key == "DefaultEncodingURL");
-    const editedByCell = find(cells, x => x.Key == "ModifiedBy");
+  private parseRecentSearchResult = (cells: Array<any>): IRecentFile => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const titleCell = find(cells, x => x.Key === "Title");
+    const keyCell = find(cells, x => x.Key === "UniqueID");
+    const fileUrlCell = find(cells, x => x.Key === "DefaultEncodingURL");
+    const editedByCell = find(cells, x => x.Key === "ModifiedBy");
 
     const recentFile: IRecentFile = {
       key: keyCell ? keyCell.Value : null,
       name: titleCell ? titleCell.Value : null,
       fileUrl: fileUrlCell ? fileUrlCell.Value : null,
-      editedBy: editedByCell ? editedByCell.Value : null
+      editedBy: editedByCell ? editedByCell.Value : null,
+      isFolder: !fileUrlCell.Value
     };
     return recentFile;
   }
@@ -234,8 +247,8 @@ export class FilesSearchService {
    */
   private parseBingSearchResult = (bingResult: IBingSearchResult): ISearchResult => {
     // Get dimensions
-    const width: number = bingResult!.thumbnail!.width ? bingResult!.thumbnail!.width : bingResult!.width;
-    const height: number = bingResult!.thumbnail!.height ? bingResult!.thumbnail!.height : bingResult!.height;
+    const width: number = bingResult.thumbnail.width ? bingResult.thumbnail.width : bingResult.width;
+    const height: number = bingResult.thumbnail.height ? bingResult.thumbnail.height : bingResult.height;
 
     // Create a search result
     const searchResult: ISearchResult = {
@@ -252,7 +265,7 @@ export class FilesSearchService {
   /**
    * Builds a file filter using the accepted file extensions
    */
-  private _getFileFilter(accepts?: string[]) {
+  private _getFileFilter(accepts?: string[]): string | undefined {
     let fileFilter: string = undefined;
     if (accepts) {
       fileFilter = " AND (";

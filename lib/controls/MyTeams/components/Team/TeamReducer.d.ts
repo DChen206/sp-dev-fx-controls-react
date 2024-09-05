@@ -6,14 +6,14 @@ export declare const teamsReducer: (state: ITeamState, action: {
 }) => {
     teamMembers: any;
     teamsOwners: string;
-    channelsMenu: import("office-ui-fabric-react").IContextualMenuProps;
+    channelsMenu: import("@fluentui/react").IContextualMenuProps;
     message: import("../ShowMessage").IShowMessageProps;
     hasError: boolean;
     isLoading: boolean;
 } | {
     teamsOwners: any;
     teamMembers: string[];
-    channelsMenu: import("office-ui-fabric-react").IContextualMenuProps;
+    channelsMenu: import("@fluentui/react").IContextualMenuProps;
     message: import("../ShowMessage").IShowMessageProps;
     hasError: boolean;
     isLoading: boolean;
@@ -28,14 +28,14 @@ export declare const teamsReducer: (state: ITeamState, action: {
     hasError: any;
     teamMembers: string[];
     teamsOwners: string;
-    channelsMenu: import("office-ui-fabric-react").IContextualMenuProps;
+    channelsMenu: import("@fluentui/react").IContextualMenuProps;
     message: import("../ShowMessage").IShowMessageProps;
     isLoading: boolean;
 } | {
     isLoading: any;
     teamMembers: string[];
     teamsOwners: string;
-    channelsMenu: import("office-ui-fabric-react").IContextualMenuProps;
+    channelsMenu: import("@fluentui/react").IContextualMenuProps;
     message: import("../ShowMessage").IShowMessageProps;
     hasError: boolean;
 };

@@ -1,6 +1,5 @@
 import * as React from "react";
 import omit from "lodash/omit";
-import cloneDeep from "lodash/cloneDeep";
 
 import {
   Box,
@@ -16,7 +15,7 @@ import { ToolbarFind } from "./ToolbarFind";
 import { ToolbarTheme } from "./ToolbarTheme";
 
 import "./toolbar.css";
-import { Icon } from "office-ui-fabric-react/lib/components/Icon/Icon";
+import { Icon } from "@fluentui/react/lib/components/Icon/Icon";
 import { InFlowToolbarItem, toolbarMenuProps } from "./InFlowToolbarItem";
 import styles from "./Toolbar.module.scss";
 import { flattenedActions, getInFlowToolbarItems, getOverflowToolbarItems, TActionGroups, TFilters, TToolbarItems, TToolbarLayout } from "./ToolbarActionsUtils";
@@ -35,6 +34,11 @@ export interface IToolbarProps extends PropsOfElement<"div"> {
    */
   filters?: TFilters;
   /**
+   * When using the Toolbar as a controlled component, use this property to set the IDs of selected filters.
+   * Leave this property undefined to use the Toolbar as an uncontrolled component.
+   */
+  selectedFilterIds?: string[];
+  /**
    * Specifies if searchbox should be displayed
    */
   find?: boolean;
@@ -45,15 +49,15 @@ export interface IToolbarProps extends PropsOfElement<"div"> {
   /**
    * Filter changed handler
    */
-  onSelectedFiltersChange?: (selectedFilters: string[]) => string[];
+  onSelectedFiltersChange?: (selectedFilters: string[]) => (string[] | void);
   /**
    * Search query changed handler
    */
   onFindQueryChange?: (findQuery: string) => string;
 }
 
-export const Toolbar = (props: IToolbarProps) => {
-  const { actionGroups, filters, filtersSingleSelect, find } = props;
+export const Toolbar = (props: IToolbarProps): JSX.Element => {
+  const { actionGroups, filters, selectedFilterIds, filtersSingleSelect, find } = props;
 
   const allActions = flattenedActions(actionGroups);
 
@@ -65,7 +69,7 @@ export const Toolbar = (props: IToolbarProps) => {
 
   const layoutQuery = React.useRef<MediaQueryList | null>(null);
 
-  const onChangeLayout = () => {
+  const onChangeLayout = (): void => {
     setLayout(
       layoutQuery.current && layoutQuery.current.matches ? "verbose" : "compact"
     );
@@ -94,7 +98,7 @@ export const Toolbar = (props: IToolbarProps) => {
     <FluentUIThemeConsumer
       render={(globalTheme) => {
 
-        if (!globalTheme || globalTheme.fontFaces.length == 0) {
+        if (!globalTheme || globalTheme.fontFaces.length === 0) {
           globalTheme = teamsTheme;
         }
         return <ToolbarTheme globalTheme={globalTheme}>
@@ -169,6 +173,7 @@ export const Toolbar = (props: IToolbarProps) => {
                 <ToolbarFilter
                   layout={layout}
                   filters={filters}
+                  selectedFilterIds={selectedFilterIds}
                   singleSelect={!!filtersSingleSelect}
                   open={filtersOpen}
                   onOpenChange={(_e, changeProps) => {

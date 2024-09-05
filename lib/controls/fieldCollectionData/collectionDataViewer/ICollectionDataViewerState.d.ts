@@ -1,4 +1,4 @@
-import { FieldValidator } from "..";
+import { FieldValidator } from "../FieldValidator";
 export interface ICollectionDataViewerState {
     crntItems: any[];
     inCreationItem?: any;

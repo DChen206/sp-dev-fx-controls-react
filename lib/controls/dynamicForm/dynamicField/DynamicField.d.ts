@@ -1,8 +1,8 @@
+import '@pnp/sp/folders';
+import '@pnp/sp/webs';
 import * as React from 'react';
 import { IDynamicFieldProps } from './IDynamicFieldProps';
 import { IDynamicFieldState } from './IDynamicFieldState';
-import '@pnp/sp/folders';
-import '@pnp/sp/webs';
 export declare class DynamicField extends React.Component<IDynamicFieldProps, IDynamicFieldState> {
     constructor(props: IDynamicFieldProps);
     componentDidUpdate(): void;
@@ -13,6 +13,8 @@ export declare class DynamicField extends React.Component<IDynamicFieldProps, ID
     private onChange;
     private onBlur;
     private getRequiredErrorText;
+    private getNumberErrorText;
+    private isEmptyArray;
     private MultiChoice_selection;
     private saveIntoSharePoint;
 }

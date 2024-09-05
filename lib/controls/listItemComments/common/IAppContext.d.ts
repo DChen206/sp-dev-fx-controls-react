@@ -8,5 +8,6 @@ export interface IAppContext {
     itemId: string;
     numberCommentsPerPage?: number;
     label?: string;
+    highlightedCommentId?: string;
 }
 //# sourceMappingURL=IAppContext.d.ts.map

@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import { IPartialTheme, ITheme } from '@fluentui/react/lib/Styling';
 import { ITreeItem } from './ITreeItem';
 import { TreeItemActionsDisplayMode } from './ITreeItemActions';
 /**
@@ -42,9 +43,9 @@ export interface ITreeViewProps {
      */
     selectChildrenIfParentSelected?: boolean;
     /**
-   * Specifies if the childrens should be selected when parent is selected. Flagged enum, so values can be combined eg. SelectChildrenMode.Select | SelectChildrenMode.Unselect
-   * By default this is set to None.
-   */
+    * Specifies if the childrens should be selected when parent is selected. Flagged enum, so values can be combined eg. SelectChildrenMode.Select | SelectChildrenMode.Unselect
+    * By default this is set to None.
+    */
     selectChildrenMode?: SelectChildrenMode;
     /**
     * Specifies if the checkboxes should be displayed for selection.
@@ -54,6 +55,10 @@ export interface ITreeViewProps {
      * Display mode of the tree item actions.
      */
     treeItemActionsDisplayMode?: TreeItemActionsDisplayMode;
+    /**
+     * Keys of items expanded by default
+     */
+    defaultExpandedKeys?: string[];
     /**
      * Keys of items selected by default
      */
@@ -83,5 +88,10 @@ export interface ITreeViewProps {
     * By default this is set to true.
     */
     defaultExpandedChildren?: boolean;
+    /**
+    * Set Fluent UI Theme.
+    * If not set or set to null or not defined, the theme passed through context will be used, or the default theme of the page will be loaded.
+    */
+    theme?: IPartialTheme | ITheme;
 }
 //# sourceMappingURL=ITreeViewProps.d.ts.map

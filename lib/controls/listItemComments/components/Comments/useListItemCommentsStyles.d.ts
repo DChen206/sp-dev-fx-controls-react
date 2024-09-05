@@ -1,5 +1,5 @@
-import { IDocumentCardStyles } from "office-ui-fabric-react/lib/DocumentCard";
-import { IStackStyles } from "office-ui-fabric-react/lib/Stack";
+import { IDocumentCardStyles } from "@fluentui/react/lib/DocumentCard";
+import { IStackStyles } from "@fluentui/react/lib/Stack";
 interface returnObjectStyles {
     itemContainerStyles: IStackStyles;
     deleteButtonContainerStyles: Partial<IStackStyles>;
@@ -7,6 +7,7 @@ interface returnObjectStyles {
     renderUserContainerStyles: Partial<IStackStyles>;
     documentCardStyles: Partial<IDocumentCardStyles>;
     documentCardDeleteStyles: Partial<IDocumentCardStyles>;
+    documentCardHighlightedStyles: Partial<IDocumentCardStyles>;
     documentCardUserStyles: Partial<IDocumentCardStyles>;
     configurationListClasses: any;
 }

@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { ITheme } from '@fluentui/react/lib/Styling';
 import { ITreeItem } from './ITreeItem';
-import { TreeViewSelectionMode } from './ITreeViewProps';
 import { TreeItemActionsDisplayMode } from './ITreeItemActions';
+import { TreeViewSelectionMode } from './ITreeViewProps';
 /**
  * TreeItem properties interface
  */
@@ -55,6 +56,10 @@ export interface ITreeItemProps {
     * Specifies whether current tree item's children should be rendered as expanded.
     */
     defaultExpandedChildren?: boolean;
+    /**
+    * Set Fluent UI Theme.
+    */
+    theme: ITheme;
 }
 /**
  * TreeItem state interface
@@ -91,7 +96,7 @@ export default class TreeItem extends React.Component<ITreeItemProps, ITreeItemS
      * @param nextProps
      * @param nextContext
      */
-    componentWillReceiveProps(nextProps: ITreeItemProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ITreeItemProps): void;
     /**
      * Default or custom rendering of tree item
      */
@@ -99,7 +104,7 @@ export default class TreeItem extends React.Component<ITreeItemProps, ITreeItemS
     /**
      * Process the child nodes
      */
-    createChildNodes: (list: any, paddingLeft: any) => any;
+    createChildNodes: (list: ITreeItem[], paddingLeft: number) => JSX.Element[];
     /**
      * Default action callback
      */

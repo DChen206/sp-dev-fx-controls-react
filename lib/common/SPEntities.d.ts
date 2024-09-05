@@ -9,6 +9,17 @@ export interface ISPContentTypeId {
  */
 export interface ISPListContentType {
     Id: ISPContentTypeId;
+    Name?: string;
+    Description?: string;
+    Group?: string;
+    Hidden?: boolean;
+    ReadOnly?: boolean;
+    StringId?: string;
+    DocumentTemplate?: string;
+    DocumentTemplateUrl?: string;
+    SchemaXml?: string;
+}
+export interface ISPContentType extends ISPListContentType {
 }
 /**
  * Represents SP List
@@ -17,7 +28,7 @@ export interface ISPList {
     Id: string;
     Title: string;
     BaseTemplate: string;
-    ContentTypes?: ISPListContentType[];
+    ContentTypes?: ISPContentType[];
 }
 /**
  * Replica of the returned value from the REST api
@@ -30,12 +41,22 @@ export interface ISPLists {
  */
 export interface ISPField {
     Id: string;
+    Title?: string;
+    InternalName?: string;
+    Hidden?: boolean;
+    ReadOnlyField?: boolean;
+    Group?: string;
     Format?: string;
     RichText?: boolean;
     SchemaXml?: string;
     LookupDisplayUrl?: string;
     TypeAsString?: string;
     ResultType?: string;
+    ValidationFormula?: string;
+    ValidationMessage?: string;
+    MinimumValue?: number;
+    MaximumValue?: number;
+    CurrencyLocaleId?: number;
 }
 /**
  * Represents value of Lookup Field (single lookup)
@@ -175,5 +196,15 @@ export interface IUploadImageResult {
     Name: string;
     ServerRelativeUrl: string;
     UniqueId: string;
+}
+export interface ISPView {
+    Id: string;
+    Title: string;
+}
+/**
+* Defines a collection of SharePoint list views
+*/
+export interface ISPViews {
+    value: ISPView[];
 }
 //# sourceMappingURL=SPEntities.d.ts.map

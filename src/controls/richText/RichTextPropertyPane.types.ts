@@ -1,4 +1,4 @@
-import { Quill } from 'react-quill';
+import type { Quill } from 'quill';
 import { ISwatchColor } from './SwatchColorPickerGroup.types';
 
 export interface IRichTextPropertyPaneProps {
@@ -11,5 +11,5 @@ export interface IRichTextPropertyPaneProps {
 }
 
 export interface IRichTextPropertyPaneState {
-  formats: any;
+  formats: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

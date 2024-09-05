@@ -28,6 +28,6 @@ export declare class UploadAttachment extends React.Component<IUploadAttachmentP
     /**
      * Default React render method
      */
-    render(): JSX.Element;
+    render(): React.ReactElement<IUploadAttachmentProps>;
 }
 //# sourceMappingURL=UploadAttachment.d.ts.map

@@ -6,7 +6,7 @@ export interface IFileBrowserProps {
     libraryUrl: string;
     folderPath: string;
     accepts: string[];
-    onChange: (filePickerResult: IFilePickerResult) => void;
+    onChange: (filePickerResult: IFilePickerResult[]) => void;
     onOpenFolder: (folder: IFile) => void;
 }
 //# sourceMappingURL=IFileBrowserProps.d.ts.map

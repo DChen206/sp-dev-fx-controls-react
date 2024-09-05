@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/components/Button';
-import { Spinner } from 'office-ui-fabric-react/lib/Spinner';
-import { FocusZone } from 'office-ui-fabric-react/lib/FocusZone';
-import { List } from 'office-ui-fabric-react/lib/List';
-import { IRectangle } from 'office-ui-fabric-react/lib/Utilities';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Selection, SelectionMode, SelectionZone } from 'office-ui-fabric-react/lib/Selection';
-import { Image, ImageFit } from 'office-ui-fabric-react/lib/Image';
-import { Check } from 'office-ui-fabric-react/lib/Check';
+import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/components/Button';
+import { Spinner } from '@fluentui/react/lib/Spinner';
+import { FocusZone } from '@fluentui/react/lib/FocusZone';
+import { List } from '@fluentui/react/lib/List';
+import { IRectangle } from '@fluentui/react/lib/Utilities';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Selection, SelectionMode, SelectionZone } from '@fluentui/react/lib/Selection';
+import { Image, ImageFit } from '@fluentui/react/lib/Image';
+import { Check } from '@fluentui/react/lib/Check';
 import { Placeholder } from '../../../Placeholder';
 import { IRecentFile } from '../../../services/FilesSearchService.types';
 import { IFilePickerResult } from '../FilePicker.types';
@@ -39,24 +39,24 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
   constructor(props: IRecentFilesTabProps) {
     super(props);
 
-    this._selection = new Selection({
-      selectionMode: SelectionMode.single,
-      onSelectionChanged: this._onSelectionChanged
-    });
-
+    this._selection = null;
 
     this.state = {
       isLoading: true,
       results: [],
-      filePickerResult: null
+      filePickerResults: [],
     };
   }
 
   /**
    * Gets the most recently used files
    */
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const recentFilesResult = await this.props.fileSearchService.executeRecentSearch(this.props.accepts);
+    this._selection = new Selection({
+      selectionMode: SelectionMode.multiple,
+      onSelectionChanged: this._onSelectionChanged
+    });
     this._selection.setItems(recentFilesResult, true);
 
     this.setState({
@@ -85,7 +85,7 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
         <div className={styles.actionButtonsContainer}>
           <div className={styles.actionButtons}>
             <PrimaryButton
-              disabled={!this.state.filePickerResult}
+              disabled={this.state.filePickerResults && !this.state.filePickerResults.length}
               onClick={() => this._handleSave()}
               className={styles.actionButton}
             >{strings.OpenButtonLabel}</PrimaryButton>
@@ -96,29 +96,21 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
     );
   }
 
-  private _onSelectionChanged = () => {
+  private _onSelectionChanged = (): void => {
+    const filePickerResults: IFilePickerResult[] = [];
     // Get the selected item
-    const selectedItems = this._selection.getSelection();
-    if (selectedItems && selectedItems.length > 0) {
-      //Get the selected key
-      const selectedKey: IRecentFile = selectedItems[0] as IRecentFile;
-      const filePickerResult: IFilePickerResult = {
-        fileAbsoluteUrl: selectedKey.fileUrl,
-        fileName: GeneralHelper.getFileNameFromUrl(selectedKey.fileUrl),
-        fileNameWithoutExtension: GeneralHelper.getFileNameWithoutExtension(selectedKey.fileUrl),
-        downloadFileContent: () => { return this.props.fileSearchService.downloadSPFileContent(selectedKey.fileUrl, GeneralHelper.getFileNameFromUrl(selectedKey.fileUrl)); }
-      };
+    this._selection.getSelection().map((selectedKey: IRecentFile) => {
+      if (!selectedKey.isFolder && selectedKey.fileUrl)
+        filePickerResults.push({
+          fileAbsoluteUrl: selectedKey.fileUrl,
+          fileName: GeneralHelper.getFileNameFromUrl(selectedKey.fileUrl),
+          fileNameWithoutExtension: GeneralHelper.getFileNameWithoutExtension(selectedKey.fileUrl),
+          downloadFileContent: () => { return this.props.fileSearchService.downloadSPFileContent(selectedKey.fileUrl, GeneralHelper.getFileNameFromUrl(selectedKey.fileUrl)); }
+        });
+    });
 
-      // Save the selected file
-      this.setState({
-        filePickerResult
-      });
-    } else {
-      // Remove any selected file
-      this.setState({
-        filePickerResult: undefined
-      });
-    }
+    this.setState({ filePickerResults });
+
     if (this._listElem) {
       // Force the list to update to show the selection check
       this._listElem.forceUpdate();
@@ -130,11 +122,16 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
      */
   private _getItemCountForPage = (itemIndex: number, surfaceRect: IRectangle): number => {
     if (itemIndex === 0) {
-      this._columnCount = Math.ceil(surfaceRect.width / MAX_ROW_HEIGHT);
-      this._columnWidth = Math.floor(surfaceRect.width / this._columnCount);
+      if (surfaceRect.width === 0) {
+        //surfaceRect.width is 0 on load of this component, passing some default values so it renders.
+        this._columnCount = 9;
+        this._columnWidth = 161;
+      } else {
+        this._columnCount = Math.ceil(surfaceRect.width / MAX_ROW_HEIGHT);
+        this._columnWidth = Math.floor(surfaceRect.width / this._columnCount);
+      }
       this._rowHeight = this._columnWidth;
     }
-
     return this._columnCount * ROWS_PER_PAGE;
   }
 
@@ -168,7 +165,10 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
     return <span className={styles.recentGridList} role="grid">
       <FocusZone>
         <SelectionZone selection={this._selection}
-          onItemInvoked={(item: IRecentFile) => this._handleItemInvoked(item)}>
+          selectionMode={SelectionMode.multiple}
+          onItemInvoked={
+            (item: any) => this._handleItemInvoked(item) // eslint-disable-line @typescript-eslint/no-explicit-any
+          }>
           <List
             ref={this._linkElement}
             items={this.state.results}
@@ -188,8 +188,8 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
   private _onRenderCell = (item: IRecentFile, index: number | undefined): JSX.Element => {
     let isSelected: boolean = false;
 
-    if (this._selection && index !== undefined) {
-      isSelected = this._selection.isIndexSelected(index);
+    if (this._selection) {
+      isSelected = this._selection.isKeySelected(item.key);
     }
 
     return (
@@ -241,28 +241,30 @@ export default class RecentFilesTab extends React.Component<IRecentFilesTabProps
   /**
    * Gets called what a file is selected.
    */
-  private _handleItemInvoked = (item: IRecentFile) => {
-    this._selection.setKeySelected(item.key, true, true);
+  private _handleItemInvoked = (item: IRecentFile): void => {
+    if (!item.isFolder) {
+      this._selection.toggleKeySelected(item.key);
+    }
   }
 
   /**
    * Gets called when it is time to save the currently selected item
    */
-  private _handleSave = () => {
-    this.props.onSave([this.state.filePickerResult]);
+  private _handleSave = (): void => {
+    this.props.onSave(this.state.filePickerResults);
   }
 
   /**
    * Gets called when it is time to close (without saving)
    */
-  private _handleClose = () => {
+  private _handleClose = (): void => {
     this.props.onClose();
   }
 
   /**
    * Creates a ref to the list
    */
-  private _linkElement = (e: any) => {
+  private _linkElement = (e: List): void => {
     this._listElem = e;
   }
 }

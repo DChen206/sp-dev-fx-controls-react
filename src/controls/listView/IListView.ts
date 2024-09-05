@@ -1,5 +1,4 @@
-import { Selection, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
-import { IColumn, IGroup } from 'office-ui-fabric-react/lib/components/DetailsList';
+import { IColumn, IGroup, SelectionMode, IDetailsRowProps } from '@fluentui/react/lib/components/DetailsList';
 
 export { SelectionMode };
 
@@ -16,7 +15,7 @@ export interface IListViewProps {
   /**
   * Handler to return the files from drag and drop.
   **/
-  onDrop?: any;
+  onDrop?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * Specify the name of the file URL path which will be used to show the file icon.
    */
@@ -24,7 +23,7 @@ export interface IListViewProps {
   /**
    * The items to render.
    */
-  items?: any[];
+  items?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * The fields you want to view in your list view
    */
@@ -46,7 +45,7 @@ export interface IListViewProps {
   /**
    * Selection event that passes the selected item(s)
    */
-  selection?: (items: any[]) => void;
+  selection?: (items: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * The index of the items to be select by default
    */
@@ -69,10 +68,22 @@ export interface IListViewProps {
    */
   stickyHeader?: boolean;
   /**
+   * Callback to override the default row rendering.
+   */
+  onRenderRow?: (props: IDetailsRowProps) => JSX.Element | undefined;
+   /**
+   * Class name to apply additional styles on list view wrapper
+   */
+  className?: string;
+  /**
+   * Class name to apply additional styles on list view
+   */
+  listClassName?: string;
+  /**
    * Custom sorting function.
    * @returns sorted collection of items
    */
-  sortItems?: (items: any[], columnName: string, descending: boolean) => any[];
+  sortItems?: (items: any[], columnName: string, descending: boolean) => any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface IListViewState {
@@ -83,7 +94,7 @@ export interface IListViewState {
   /**
    * The items to render.
    */
-  items?: any[];
+  items?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * Given column defitions.
    * If none are provided, default columns will be created based on the item's properties.
@@ -100,7 +111,7 @@ export interface IGrouping {
 }
 
 export interface IGroupsItems {
-  items: any[];
+  items: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   groups: IGroup[];
 }
 
@@ -137,5 +148,5 @@ export interface IViewField {
   /**
    * Override the render method of the field
    */
-  render?: (item?: any, index?: number, column?: IColumn) => any;
+  render?: (item?: any, index?: number, column?: IColumn) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

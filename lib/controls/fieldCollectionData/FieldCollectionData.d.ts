@@ -15,5 +15,6 @@ export declare class FieldCollectionData extends React.Component<IFieldCollectio
      */
     private onSave;
     render(): JSX.Element;
+    private getElement;
 }
 //# sourceMappingURL=FieldCollectionData.d.ts.map

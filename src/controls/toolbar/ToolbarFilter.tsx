@@ -83,7 +83,7 @@ const addSelectableParent = (
   items: ShorthandCollection<TreeItemProps>
 ): ShorthandCollection<TreeItemProps> => {
   return items.map((item) => {
-    if (item && item.hasOwnProperty("items"))
+    if (item && item.hasOwnProperty("items")) // eslint-disable-line no-prototype-builtins
       return Object.assign(item, {
         selectableParent: true,
         items: addSelectableParent(get(item, ["items"], [])),
@@ -95,8 +95,8 @@ const addSelectableParent = (
 const findSingleTitle = (
   selectedId: string,
   filters: ShorthandCollection<TreeItemProps>
-): string | null => {
-  let result = null;
+): string | undefined => {
+  let result: string | undefined = undefined;
   for (let i = 0; i < filters.length; i += 1) {
     if (get(filters, [i, "id"]) === selectedId) {
       result = get(filters, [i, "title"]);
@@ -122,7 +122,7 @@ const getSingleTitle = (
 ): string => {
   switch (layout) {
     case "verbose":
-      return (selectedId && findSingleTitle(selectedId!, filters)) || "Filter";
+      return (selectedId && findSingleTitle(selectedId, filters)) || "Filter";
     default:
     case "compact":
       return selectedId ? "(1)" : "";
@@ -132,30 +132,52 @@ const getSingleTitle = (
 export interface IExtendedToolbarFilterProps {
   layout: TToolbarLayout;
   filters: ObjectShorthandCollection<TreeItemProps, never>;
+  selectedFilterIds?: string[];
   singleSelect: boolean;
   open: boolean;
   onOpenChange: ComponentEventHandler<PopupProps>;
-  toolbarMenuProps: any;
-  toolbarButtonStyles?: any;
-  onSelectedFiltersChange?: (selectedFilters: string[]) => string[];
+  toolbarMenuProps: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  toolbarButtonStyles?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  onSelectedFiltersChange?: (selectedFilters: string[]) => string[] | void;
 }
 
-const passThrough = (arg: any) => arg;
-
-export const ToolbarFilter = (props: IExtendedToolbarFilterProps) => {
+export const ToolbarFilter = (props: IExtendedToolbarFilterProps): JSX.Element => {
   const {
     layout,
     filters,
+    selectedFilterIds: externalSelectedFilters,
     singleSelect,
     open,
     onOpenChange,
     toolbarMenuProps,
   } = props;
   const [selectedFilters, setSelectedFilters] = React.useState<string[]>([]);
-  const propagateSetSelectedFilters = (eventSelectedFilters: string[]) =>
-    setSelectedFilters(
-      (props.onSelectedFiltersChange || passThrough)(eventSelectedFilters)
-    );
+  const propagateSetSelectedFilters = (eventSelectedFilters: string[]): void => {
+    if (props.onSelectedFiltersChange) {
+      const selectedFiltersAfterNotifyingChange = props.onSelectedFiltersChange(eventSelectedFilters);
+      // If Toolbar is used as a controlled component - i.e. selectedFilterIds is defined - then we ignore the value
+      // returned by the onSelectedFiltersChange callback and assume that selectedFilterIds will be updated
+      // to reflect the new set of selected filters.
+      // If Toolbar is uncontrolled then a defined returned value from the onSelectedFilterChange callback will be
+      // used as the new set of selected filters.
+      if (externalSelectedFilters === undefined) {
+        console.log("externalSelectedFilters is undefined");
+        if (selectedFiltersAfterNotifyingChange !== undefined && Array.isArray(selectedFiltersAfterNotifyingChange)) {
+          setSelectedFilters(selectedFiltersAfterNotifyingChange);
+        } else {
+          setSelectedFilters(eventSelectedFilters);
+        }
+      }
+    } else {
+      setSelectedFilters(eventSelectedFilters);
+    }
+  };
+
+  React.useEffect(() => {
+    if (externalSelectedFilters !== undefined) {
+      setSelectedFilters(externalSelectedFilters);
+    }
+  }, [externalSelectedFilters]);
 
   const invokerTitle = singleSelect
     ? getSingleTitle(layout, selectedFilters[0], filters)

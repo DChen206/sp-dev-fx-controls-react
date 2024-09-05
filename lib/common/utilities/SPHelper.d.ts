@@ -2,6 +2,9 @@ import { IContext } from '../Interfaces';
 import { ListItemAccessor } from '@microsoft/sp-listview-extensibility';
 import '@pnp/sp/fields';
 import '@pnp/sp/site-users/web';
+import '@pnp/sp/webs';
+import "@pnp/sp/lists";
+import { ISiteUserInfo } from '@pnp/sp/site-users/types';
 /**
  * Helper class to work with SharePoint objects and entities
  */
@@ -31,7 +34,7 @@ export declare class SPHelper {
      * @param fieldId Field Id
      * @param context SPFx Context
      */
-    static getLookupFieldListDispFormUrl(fieldId: string, context: IContext): Promise<any>;
+    static getLookupFieldListDispFormUrl(fieldId: string, context: IContext): Promise<string>;
     /**
      * Gets column's value for the row using List Item Accessor.
      * This method works with private property _values of List Item Accessor to get such values as FriendlyDisplay text for Date, and more.
@@ -56,13 +59,14 @@ export declare class SPHelper {
      * @param id user id
      * @param context SPFx context
      */
-    static getUserById(id: number, context: IContext): Promise<any>;
+    static getUserById(id: number, context: IContext): Promise<ISiteUserInfo>;
     /**
      * Returns user profile properties
      * @param loginName User's login name
      * @param context SPFx context
      */
     static getUserProperties(loginName: string, context: IContext): Promise<any>;
+    static isTextFieldType(fieldType?: string): boolean;
     private static _updateFieldInSessionStorage;
     private static _updateSessionStorageLoadedViewFields;
     private static _getLoadedViewFieldsFromStorage;

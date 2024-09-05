@@ -50,10 +50,6 @@ export declare class FileBrowser extends React.Component<IFileBrowserProps, IFil
      */
     private _itemSelectionChanged;
     /**
-     * Handles item click.
-     */
-    private _handleItemInvoked;
-    /**
      * Gets all files in a library with a matchihg path
      */
     private _getListItems;

@@ -7,16 +7,17 @@ export declare class PeoplePicker extends React.Component<IPeoplePickerProps, IP
     private peopleSearchService;
     private suggestionsLimit;
     private groupId;
+    private searchTextCount;
     constructor(props: IPeoplePickerProps);
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * componentWillUpdate lifecycle hook
      */
-    componentWillUpdate(nextProps: IPeoplePickerProps, nextState: IPeoplePickerState): void;
-    componentWillReceiveProps(nextProps: IPeoplePickerProps): void;
+    UNSAFE_componentWillUpdate(nextProps: IPeoplePickerProps, nextState: IPeoplePickerState): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IPeoplePickerProps): void;
     /**
      * Get initial persons
      */
@@ -29,6 +30,11 @@ export declare class PeoplePicker extends React.Component<IPeoplePickerProps, IP
      * On item selection change event
      */
     private onChange;
+    /**
+     * On blur UI event
+     * @param ev
+     */
+    private onBlur;
     /**
      * Returns the most recently used person
      *

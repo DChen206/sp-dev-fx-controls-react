@@ -1,4 +1,3 @@
-import "../css/AccordionStylesOverride.css";
 import * as React from "react";
 import { DivAttributes } from "../helpers/types";
 declare type Props = DivAttributes;

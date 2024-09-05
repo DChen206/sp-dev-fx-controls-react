@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ICollectionDataViewerProps, ICollectionDataViewerState } from '.';
+import { ICollectionDataViewerProps } from './ICollectionDataViewerProps';
+import { ICollectionDataViewerState } from './ICollectionDataViewerState';
 export declare class CollectionDataViewer extends React.Component<ICollectionDataViewerProps, ICollectionDataViewerState> {
     private readonly SORT_IDX;
     constructor(props: ICollectionDataViewerProps);

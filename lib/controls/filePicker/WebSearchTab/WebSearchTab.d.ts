@@ -17,10 +17,6 @@ export default class WebSearchTab extends React.Component<IWebSearchTabProps, IW
     render(): React.ReactElement<IWebSearchTabProps>;
     private _onSelectionChanged;
     /**
-     * Resets state of the control to the default one
-     */
-    private _clearSearch;
-    /**
      * Renders the returned search results
      */
     private _renderSearchResults;

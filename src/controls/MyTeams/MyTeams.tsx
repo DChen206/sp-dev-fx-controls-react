@@ -1,9 +1,9 @@
-import { Text } from "office-ui-fabric-react/lib/Text";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
-import { FontIcon } from "office-ui-fabric-react/lib/Icon";
-import { MessageBarType } from "office-ui-fabric-react/lib/MessageBar";
-import { Spinner, SpinnerSize } from "office-ui-fabric-react/lib/Spinner";
-import { Customizer } from "office-ui-fabric-react/lib/Utilities";
+import { Text } from "@fluentui/react/lib/Text";
+import { Stack } from "@fluentui/react/lib/Stack";
+import { FontIcon } from "@fluentui/react/lib/Icon";
+import { MessageBarType } from "@fluentui/react/lib/MessageBar";
+import { Spinner, SpinnerSize } from "@fluentui/react/lib/Spinner";
+import { Customizer } from "@fluentui/react/lib/Utilities";
 import * as React from "react";
 import { IMyTeamsProps } from "./IMyTeamsProps";
 import { getMyTeamsStyles } from "./MyTeamsStyles";
@@ -89,7 +89,7 @@ export const MyTeams: React.FunctionComponent<IMyTeamsProps> = (
           payload: true
         });
       }
-    })();
+    })().then(() => { /* no-op; */ }).catch(() => { /* no-op; */ });
   }, []);
 
 
@@ -132,12 +132,13 @@ export const MyTeams: React.FunctionComponent<IMyTeamsProps> = (
                 myTeams.map((team: ITeam) => {
                   return (
                     <Team
+                      key={team.id}
                       team={team}
                       serviceScope={webPartContext.serviceScope}
                       themeVariant={themeVariant}
                       onSelectedChannel={onSelectedChannel}
                       enablePersonCardInteraction={enablePersonCardInteraction}
-                    ></Team>
+                    />
                   );
                 })
               )}

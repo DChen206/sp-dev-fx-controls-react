@@ -1,3 +1,5 @@
+import { IBasePickerStyles } from '@fluentui/react';
+
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 
 export interface IListItemPickerProps {
@@ -11,7 +13,7 @@ export interface IListItemPickerProps {
   orderBy?: string;
   className?: string;
   webUrl?: string;
-  defaultSelectedItems?: any[];
+  defaultSelectedItems?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   disabled?: boolean;
   suggestionsHeaderText?:string;
   noResultsFoundText?:string;
@@ -21,7 +23,7 @@ export interface IListItemPickerProps {
    */
   placeholder?: string;
 
-  onSelectedItem: (item:any) => void;
+  onSelectedItem: (item: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /**
    * The label for the control
@@ -32,5 +34,6 @@ export interface IListItemPickerProps {
     * Enable default suggestions. All options are displayed by default when clicking on the control
     */
    enableDefaultSuggestions?: boolean;
+   styles? : IBasePickerStyles;
 
 }

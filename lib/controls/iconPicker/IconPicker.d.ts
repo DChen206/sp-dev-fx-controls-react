@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IIconPickerProps } from '.';
+import { IIconPickerProps } from './IIconPickerProps';
 import { IIconPickerState } from './IIconPickerState';
 export declare class IconPicker extends React.Component<IIconPickerProps, IIconPickerState> {
     private radioIdBase;

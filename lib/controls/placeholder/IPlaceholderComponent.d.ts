@@ -1,4 +1,5 @@
 /// <reference types="react" />
+import { IPartialTheme, ITheme } from '@fluentui/react/lib/Styling';
 /**
  * Used to display a placeholder in case of no or temporary content. Button is optional.
  *
@@ -35,6 +36,11 @@ export interface IPlaceholderProps {
      * Optional: As the button is optional.
      */
     onConfigure?: () => void;
+    /**
+     * Set Fluent UI Theme.
+     * If not set or set to null or not defined, the theme passed through context will be used, or the default theme of the page will be loaded.
+     */
+    theme?: IPartialTheme | ITheme;
 }
 export interface IPlaceholderState {
     width: number;

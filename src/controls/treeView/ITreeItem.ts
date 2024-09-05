@@ -1,5 +1,5 @@
 import { ITreeItemAction } from './ITreeItemActions';
-import { IIconProps } from 'office-ui-fabric-react/lib/Icon';
+import { IIconProps } from '@fluentui/react/lib/Icon';
 
 /**
  * Public properties of the Tree Item
@@ -32,7 +32,7 @@ export interface ITreeItem {
   /**
    * Additional data of the tree item.
    */
-  data?: any;
+  data?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * List of actions.
    */

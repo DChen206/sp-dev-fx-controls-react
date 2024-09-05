@@ -1,4 +1,4 @@
-import { IFieldCollectionDataProps } from "..";
+import { IFieldCollectionDataProps } from "../../../FieldCollectionData";
 export interface ICollectionDataViewerProps extends IFieldCollectionDataProps {
     fOnSave: (items: any[]) => void;
     fOnClose: () => void;

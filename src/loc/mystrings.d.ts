@@ -1,12 +1,18 @@
 declare interface IControlStrings {
+  UpLoadFilesDragDropLabel: string;
+  UploadFilesUploadButtonLabel: string;
+  UploadFilesButtonLabel: string;
+  UpLoadFilesDeleteButtonLabel: string;
+  UpLoadFilesSelectAllLabel: string;
+
+  ProgressStepsIndicatorNoSteps: string;
   ListItemCommentsLabel: string;
   ListItemCommentsNoCommentsLabel: string;
   ListItemCommentDIalogDeleteSubText: string;
   ListItemCommentsDialogDeleteTitle: string;
 
-  MyTeamsMessageError:string;
-  MyTeamsNoTeamsMessage:string;
-  MyTeamsLoadingMessage:string;
+  MyTeamsMessageError: string;
+  MyTeamsNoTeamsMessage: string;
   MyTeamsLoadingMessage: string;
   MyTeamsTeamChannelPublicMessage: string;
   MyTeamsTeamChannelTypeMessage: string;
@@ -350,6 +356,7 @@ declare interface IControlStrings {
   CollectionDataItemMissingFields: string;
   InvalidUrlError: string;
   CollectionDataSearch: string;
+  CollectionDataMinimumUsersDefaultMessage: string
 
   ViewMore: string;
 
@@ -360,9 +367,43 @@ declare interface IControlStrings {
   DynamicFormTermPanelTitle: string;
   DynamicFormEnterURLPlaceholder: string;
   DynamicFormEnterDescriptionPlaceholder: string;
+  DynamicFormDialogValidationErrorTitle: string;
+  DynamicFormDialogValidationErrorMessage: string;
+  DynamicFormNumberValueMustBeGreaterThan: string;
+  DynamicFormNumberValueMustBeBetween: string;
+  DynamicFormNumberValueMustBeLowerThan: string;
+  DynamicFormChooseFileLabel: string;
+  DynamicFormChooseFileButtonText: string;
+  DynamicFormRequiredFileMessage: string;
 
   // Location picker
-  customDisplayName:string;
+  customDisplayName: string;
+
+  // Modern taxonomy picker
+  ModernTaxonomyPickerDefaultPlaceHolder: string;
+  ModernTaxonomyPickerTreeTitleSingle: string;
+  ModernTaxonomyPickerTreeTitleMulti: string;
+  ModernTaxonomyPickerAddTagButtonTooltip: string;
+  ModernTaxonomyPickerApplyButtonText: string;
+  ModernTaxonomyPickerCancelButtonText: string;
+  ModernTaxonomyPickerLoadMoreText: string;
+  ModernTaxonomyPickerRemoveButtonText: string;
+  ModernTaxonomyPickerPanelCloseButtonText: string;
+  ModernTaxonomyPickerNoResultsFound: string;
+  ModernTaxonomyPickerSuggestionInLabel: string;
+
+  // Modern Audio control
+  ModernAudioPlay: string;
+  ModernAudioPause: string;
+  ModernAudioIncVol: string;
+  ModernAudioDecVol: string;
+  ModernAudioMute: string;
+
+  //TermSetNavigationb Control
+  TermSetNavigationNoTerms: string;
+  TermSertNaviagtionErrorMessage: string;
+
+  HoverReactionBarSearchEmojiPlaceholder: string;
 }
 
 declare interface IDateTimeStrings {
@@ -390,6 +431,8 @@ declare interface IDateTimeStrings {
   L_RelativeDateTime_XDaysFutureIntervals: string;
   L_RelativeDateTime_XDaysIntervals: string;
   L_RelativeDateTime_Today: string;
+
+
 
 
 }

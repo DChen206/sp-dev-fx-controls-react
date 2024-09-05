@@ -1,8 +1,8 @@
+import { IconButton } from '@fluentui/react/lib/Button';
+import { IContextualMenuItem, IContextualMenuProps } from '@fluentui/react/lib/ContextualMenu';
 import * as React from 'react';
-import { IContextualMenuItem, IContextualMenuProps } from 'office-ui-fabric-react/lib/ContextualMenu';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { ITreeItem } from './ITreeItem';
-import { ITreeItemAction, IConcreteTreeItemActionProps } from './ITreeItemActions';
+import { IConcreteTreeItemActionProps, ITreeItemAction } from './ITreeItemActions';
 import styles from './TreeView.module.scss';
 
 /**
@@ -13,7 +13,7 @@ export class DropdownTreeItemAction extends React.Component<IConcreteTreeItemAct
   /**
    * componentWillMount lifecycle hook
    */
-  public componentWillMount(): void {
+  public UNSAFE_componentWillMount(): void {
     this.checkForImmediateInvocations();
   }
 
@@ -21,14 +21,22 @@ export class DropdownTreeItemAction extends React.Component<IConcreteTreeItemAct
    * Prepates contextual menu items for dropdown.
    */
   private prepareContextualMenuProps = (treeItem: ITreeItem, treeItemActions: ITreeItemAction[]): IContextualMenuProps => {
-    let items: IContextualMenuItem[] = [];
+    const items: IContextualMenuItem[] = [];
     let useTargetWidth = true;
 
     for (const treeItemAction of treeItemActions) {
       if (!treeItemAction.hidden) {
-        let treeItemActionMenuItem: IContextualMenuItem = {
+        const treeItemActionMenuItem: IContextualMenuItem = {
           key: treeItem.key.toString(),
-          onClick: () => { this.onActionExecute(treeItemAction); }
+          onClick: () => {
+            this.onActionExecute(treeItemAction)
+            .then(() => {
+              // no-op;
+            })
+            .catch(() => {
+              // no-op;
+            });
+          }
         };
 
         treeItemActionMenuItem.text = treeItemAction.title;
@@ -48,27 +56,19 @@ export class DropdownTreeItemAction extends React.Component<IConcreteTreeItemAct
   }
 
   /**
-   * Prepare treeItem action button style.
-   */
-  private getTreeItemActionActionButtonStyle = (): React.CSSProperties => {
-    let result: React.CSSProperties = {
-      backgroundColor: "transparent",
-      width: "14px",
-      display: "inline-flex",
-      padding: "0px"
-    };
-
-    return result;
-  }
-
-  /**
    * Check if there are action to immediatly invoke
    */
-  private checkForImmediateInvocations() {
+  private checkForImmediateInvocations(): void {
     const { treeItemActions } = this.props;
     for (const action of treeItemActions) {
       if (action.invokeActionOnRender) {
-        this.onActionExecute(action);
+        this.onActionExecute(action)
+        .then(() => {
+          // no-op;
+        })
+        .catch(() => {
+          // no-op;
+        });
       }
     }
   }
@@ -76,8 +76,8 @@ export class DropdownTreeItemAction extends React.Component<IConcreteTreeItemAct
   /**
    * Handler to execute selected action.
    */
-  private onActionExecute = async (treeItemAction: ITreeItemAction) => {
-    const updateAction = await treeItemAction.actionCallback(this.props.treeItem);
+  private onActionExecute = async (treeItemAction: ITreeItemAction): Promise<void> => {
+    await treeItemAction.actionCallback(this.props.treeItem);
     this.props.treeItemActionCallback();
   }
 
@@ -97,6 +97,7 @@ export class DropdownTreeItemAction extends React.Component<IConcreteTreeItemAct
           className={styles.actionMore}
           title="More"
           ariaLabel="More"
+          theme={this.props.theme}
         />
       </div>
     );

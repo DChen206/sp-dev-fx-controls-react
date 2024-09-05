@@ -1,4 +1,4 @@
-import { IIconProps } from "office-ui-fabric-react/lib/Icon";
+import { IIconProps } from "@fluentui/react/lib/Icon";
 
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 
@@ -141,16 +141,16 @@ export interface IFilePickerProps {
   /**
    * Optional additional renderer for Link tab
    */
-  renderCustomLinkTabContent?: (filePickerResult: IFilePickerResult) => JSX.Element | null;
+  renderCustomLinkTabContent?: (filePickerResult: IFilePickerResult) => JSX.Element | undefined;
   /**
    * Optional additional renderer for Upload tab
    */
-  renderCustomUploadTabContent?: (filePickerResult: IFilePickerResult) => JSX.Element | null;
+  renderCustomUploadTabContent?: (filePickerResult: IFilePickerResult) => JSX.Element | undefined;
 
   /**
    * Optional additional renderer for Multiple Upload tab
    */
-  renderCustomMultipleUploadTabContent?: (filePickerResult: IFilePickerResult[]) => JSX.Element | null;
+  renderCustomMultipleUploadTabContent?: (filePickerResult: IFilePickerResult[]) => JSX.Element | undefined;
 
   /**
    * Specifies if Site Pages library to be visible on Sites tab
@@ -161,4 +161,18 @@ export interface IFilePickerProps {
    * Specifies a default folder to be active in the Site Files tab
    */
   defaultFolderAbsolutePath?: string;
+
+  /**
+   * Specifies a default site in the Site Files tab
+   */
+   webAbsoluteUrl?: string;
+
+   /**
+   * Specifies if external links are allowed
+   */
+  allowExternalLinks?: boolean;
+  /**
+   * Specifies if file check should be done
+   */
+   checkIfFileExists?: boolean;
 }

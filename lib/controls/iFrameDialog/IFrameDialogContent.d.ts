@@ -1,7 +1,7 @@
 import * as React from "react";
 export interface IIFrameDialogContentProps extends React.IframeHTMLAttributes<HTMLIFrameElement> {
     close: () => void;
-    iframeOnLoad?: (iframe: any) => void;
+    iframeOnLoad?: (iframe: HTMLIFrameElement) => void;
 }
 export interface IIFrameDialogContentState {
     isContentVisible?: boolean;

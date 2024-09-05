@@ -1,14 +1,16 @@
 import * as strings from 'ControlStrings';
 import * as React from "react";
 import SPservice from "../../services/SPService";
-import { TagPicker } from "office-ui-fabric-react/lib/components/pickers/TagPicker/TagPicker";
-import { Label } from "office-ui-fabric-react/lib/Label";
-import { getId } from 'office-ui-fabric-react/lib/Utilities';
-import { IListItemPickerProps, IListItemPickerState } from ".";
+import { TagPicker } from "@fluentui/react/lib/components/pickers/TagPicker/TagPicker";
+import { Label } from "@fluentui/react/lib/Label";
+import { getId } from '@fluentui/react/lib/Utilities';
+import { IListItemPickerProps } from "./IListItemPickerProps";
+import { IListItemPickerState } from "./IListItemPickerState";
 import * as telemetry from '../../common/telemetry';
 import isEqual from 'lodash/isEqual';
-import { ITag } from 'office-ui-fabric-react/lib/components/pickers/TagPicker/TagPicker.types';
-
+import { ITag } from '@fluentui/react/lib/components/pickers/TagPicker/TagPicker.types';
+import { SPHelper } from '../../common/utilities/SPHelper';
+import { Guid } from "@microsoft/sp-core-library"
 
 export class ListItemPicker extends React.Component<IListItemPickerProps, IListItemPickerState> {
   private _spservice: SPservice;
@@ -25,19 +27,35 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
       showError: false,
       errorMessage: "",
       suggestionsHeaderText: !this.props.suggestionsHeaderText ? strings.ListItemPickerSelectValue : this.props.suggestionsHeaderText,
-      selectedItems: props.defaultSelectedItems || []
+      selectedItems: props.defaultSelectedItems || [],
+      safeListId: props.listId,
     };
 
     // Get SPService Factory
     this._spservice = new SPservice(this.props.context);
   }
 
-  public componentDidMount() {
-    this.loadField(this.props);
+  private ensureLoadField(): void {
+    this.loadField(this.props).then(() => { /* no-op; */ }).catch(() => { /* no-op; */ });
   }
 
-  public componentWillReceiveProps(nextProps: IListItemPickerProps) {
-    let newSelectedItems: any[] | undefined;
+  public componentDidMount(): void {
+    // Ensure list ID if a list name is passed in listId parameter
+    if(!Guid.tryParse(this.props.listId)) {
+      this._spservice.getListId(this.props.listId)
+        .then((value) => {
+            this.setState({...this.state,
+              safeListId: value });
+            this.ensureLoadField();
+        })
+        .catch(() => { /* no-op; */ });
+    } else {
+      this.ensureLoadField();
+    }
+  }
+
+  public UNSAFE_componentWillReceiveProps(nextProps: IListItemPickerProps): void {
+    let newSelectedItems: any[] | undefined; // eslint-disable-line @typescript-eslint/no-explicit-any
     if (this.props.listId !== nextProps.listId) {
       newSelectedItems = [];
     }
@@ -52,8 +70,8 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
     if (this.props.listId !== nextProps.listId
       || this.props.columnInternalName !== nextProps.columnInternalName
       || this.props.webUrl !== nextProps.webUrl) {
-      this.loadField(nextProps);
-    }
+        this.ensureLoadField();
+      }
   }
 
   /**
@@ -75,6 +93,7 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
         }
         <div id={this._tagPickerId}>
           <TagPicker onResolveSuggestions={this.onFilterChanged}
+          styles={this.props.styles}
             onEmptyResolveSuggestions={(selectLists) => {
               if (this.props.enableDefaultSuggestions) {
                 return this.onFilterChanged("", selectLists);
@@ -104,7 +123,7 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
   /**
    * Get text from Item
    */
-  private getTextFromItem(item: any): string {
+  private getTextFromItem(item: any): string { // eslint-disable-line @typescript-eslint/no-explicit-any
     return item.name;
   }
 
@@ -121,7 +140,7 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
   /**
    * Filter Change
    */
-  private onFilterChanged = async (filterText: string, tagList: ITag[]) => {
+  private onFilterChanged = async (filterText: string, tagList: ITag[]): Promise<ITag[]> => {
     let resolvedSugestions: ITag[] = await this.loadListItems(filterText);
 
     const {
@@ -130,7 +149,7 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
 
     // Filter out the already retrieved items, so that they cannot be selected again
     if (selectedItems && selectedItems.length > 0) {
-      let filteredSuggestions = [];
+      const filteredSuggestions = [];
       for (const suggestion of resolvedSugestions) {
         const exists = selectedItems.filter(sItem => sItem.key === suggestion.key);
         if (!exists || exists.length === 0) {
@@ -156,19 +175,19 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
    * Function to load List Items
    */
   private loadListItems = async (filterText: string): Promise<{ key: string; name: string }[]> => {
-    let { listId, columnInternalName, keyColumnInternalName, webUrl, filter, orderBy, substringSearch } = this.props;
+    const { columnInternalName, keyColumnInternalName, webUrl, filter, orderBy, substringSearch } = this.props;
     const {
-      field
+      field, safeListId
     } = this.state;
-    let arrayItems: { key: string; name: string }[] = [];
-    let keyColumn: string = keyColumnInternalName || 'Id';
+    const arrayItems: { key: string; name: string }[] = [];
+    const keyColumn: string = keyColumnInternalName || 'Id';
 
     try {
-      let listItems = await this._spservice.getListItems(filterText, listId, columnInternalName, field, keyColumn, webUrl, filter, substringSearch, orderBy ? orderBy : ''); // JJ - 20200613 - find by substring as an option
+      const listItems = await this._spservice.getListItems(filterText, safeListId, columnInternalName, field, keyColumn, webUrl, filter, substringSearch, orderBy ? orderBy : ''); // JJ - 20200613 - find by substring as an option
       // Check if the list had items
       if (listItems.length > 0) {
         for (const item of listItems) {
-          arrayItems.push({ key: item[keyColumn], name: item[columnInternalName] });
+          arrayItems.push({ key: item[keyColumn], name: SPHelper.isTextFieldType(field.TypeAsString === 'Calculated' ? field.ResultType : field.TypeAsString) ? item[columnInternalName] : item.FieldValuesAsText[columnInternalName] });
         }
       }
       return arrayItems;
@@ -188,7 +207,7 @@ export class ListItemPicker extends React.Component<IListItemPickerProps, IListI
       field: undefined
     });
 
-    const field = await this._spservice.getField(props.listId, props.columnInternalName, props.webUrl);
+    const field = await this._spservice.getField(this.state.safeListId, props.columnInternalName, props.webUrl);
 
     this.setState({
       field

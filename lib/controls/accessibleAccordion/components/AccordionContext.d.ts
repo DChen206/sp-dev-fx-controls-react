@@ -1,4 +1,3 @@
-import "../css/AccordionStylesOverride.css";
 import * as React from "react";
 import AccordionStore, { InjectedButtonAttributes, InjectedHeadingAttributes, InjectedPanelAttributes } from "../helpers/AccordionStore";
 import { UUID } from "./ItemContext";

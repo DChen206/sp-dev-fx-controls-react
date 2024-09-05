@@ -1,9 +1,20 @@
+/// <reference types="react" />
 import { ISwatchColor } from './SwatchColorPickerGroup.types';
 export interface IRichTextProps {
     /**
-       * CSS class to apply to the rich text editor.
-       * @defaultvalue null
-       */
+     * ID to apply to the rich text editor.
+     * @defaultvalue undefined
+     */
+    id?: string;
+    /**
+     * Label displayed above the rich text.
+     * @defaultvalue undefined
+     */
+    label?: string;
+    /**
+     * CSS class to apply to the rich text editor.
+     * @defaultvalue null
+     */
     className?: string;
     /**
      * Indicates if the rich text editor should be in edit mode
@@ -32,6 +43,11 @@ export interface IRichTextProps {
      * Returns the text that will be inserted in the rich text control.
      */
     onChange?: (text: string) => string;
+    /**
+     * Custom renderer for the label.
+     * Returns the custom render.
+     */
+    onRenderLabel?: (props: IRichTextProps) => JSX.Element;
 }
 export interface StyleOptions {
     /**
@@ -73,7 +89,7 @@ export interface StyleOptions {
      */
     showImage?: boolean;
     /**
-     * Indicates if we should show the Styles button (Heading 1, Heading 2, ..., Pull quote)
+     * Indicates if we should show the Styles button (Heading 2, Heading 3, ..., Pull quote)
      * @defaultvalue true
      */
     showStyles?: boolean;

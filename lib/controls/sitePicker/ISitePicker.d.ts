@@ -1,26 +1,6 @@
+import { IDropdownStyles } from '@fluentui/react';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
-export interface ISite {
-    /**
-     * ID of the site
-     */
-    id?: string;
-    /**
-     * Title
-     */
-    title?: string;
-    /**
-    * Base URL
-    */
-    url?: string;
-    /**
-     * ID of the web
-     */
-    webId?: string;
-    /**
-     * ID of the hub site
-     */
-    hubSiteId?: string;
-}
+import { ISite } from '../../services/SPSitesService';
 export interface ISitePickerProps {
     /**
      * Site picker label
@@ -47,9 +27,9 @@ export interface ISitePickerProps {
      */
     multiSelect?: boolean;
     /**
-     * Defines what entities are available for selection: site collections, sites, hub sites.
+     * Defines what entities are available for selection: site collections, sites, hub sites, sites inside hub.
      */
-    mode?: 'site' | 'web' | 'hub';
+    mode?: 'site' | 'web' | 'hub' | 'associatedsites';
     /**
      * Specifies if the options should be limited by the current site collections. Taken into consideration if selectionMode is set to 'web'
      */
@@ -87,5 +67,23 @@ export interface ISitePickerProps {
      * If provided, additional class name to provide on the dropdown element.
      */
     className?: string;
+    /**
+     * Specifies if the duplicates should be trimmed. false by default.
+     * Applicable if mode is set to site or web.
+     */
+    trimDuplicates?: boolean;
+    /**
+     * If provided will be added to the search query as AND part.
+     * Applicable if mode is set to site or web.
+     */
+    additionalQuery?: string;
+    /**
+     * If provided will be used in the search for all sites in a hub.
+     * Applicable if mode is set to associatedsites.
+     * If mode is set to associatedsites and no hubsiteId is provided, the current site's hub ID will be used.
+     */
+    hubsiteId?: string;
+    styles?: IDropdownStyles;
 }
+export { ISite };
 //# sourceMappingURL=ISitePicker.d.ts.map

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { IPlaceholderProps } from './IPlaceholderComponent';
 import { IPlaceholderState } from '.';
+import { IPlaceholderProps } from './IPlaceholderComponent';
 /**
  * Placeholder component
  */

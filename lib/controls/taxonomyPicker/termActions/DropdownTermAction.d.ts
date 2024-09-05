@@ -4,7 +4,7 @@ export declare class DropdownTermAction extends React.Component<IConcreteTermAct
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * Prepates contextual menu items for dropdown.
      */

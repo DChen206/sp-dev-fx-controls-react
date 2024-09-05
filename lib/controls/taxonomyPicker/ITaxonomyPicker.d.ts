@@ -20,7 +20,7 @@ export interface ITaxonomyPickerProps {
      */
     allowMultipleSelections?: boolean;
     /**
-     * Defines the selected by default term sets.
+     * Defines the terms selected by default. For each term object, an empty string can be provided for properties path and termset.
      */
     initialValues?: IPickerTerms;
     /**

@@ -1,9 +1,9 @@
 import * as strings from 'ControlStrings';
 import * as React from 'react';
 import { ITimeComponentProps } from './ITimeComponentProps';
-import { MaskedTextField } from 'office-ui-fabric-react/lib/TextField';
+import { MaskedTextField } from '@fluentui/react/lib/TextField';
 import { TimeHelper } from './TimeHelper';
-import { IDropdownOption, Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
+import { IDropdownOption, Dropdown } from '@fluentui/react/lib/Dropdown';
 import { TimeDisplayControlType } from './TimeDisplayControlType';
 
 /**
@@ -69,9 +69,9 @@ export default class MinutesComponent extends React.Component<ITimeComponentProp
     }
   }
 
-  private _initMinutesOptions(step: number) {
+  private _initMinutesOptions(step: number): void {
 
-    let minutes: IDropdownOption[] = [];
+    const minutes: IDropdownOption[] = [];
     for (let j = 0; j < 60; j += step) {
       let digitMin: string;
       if (j < 10) {

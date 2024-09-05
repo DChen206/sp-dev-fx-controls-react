@@ -1,4 +1,4 @@
-@import "~office-ui-fabric-react/dist/sass/References.scss";
+@import '~@fluentui/react/dist/sass/References.scss';
 
 .FieldEditor {
 	padding: 4px 3px;
@@ -46,7 +46,7 @@
 	margin-right: 8px;
 }
 
-.feildDisplayNoPadding {
+.fieldDisplayNoPadding {
   display: inline-block;
 	vertical-align: top;
 	width: 100%;
@@ -55,8 +55,8 @@
 	outline: 0;
 }
 
-.feildDisplay {
-	@extend .feildDisplayNoPadding;
+.fieldDisplay {
+	@extend .fieldDisplayNoPadding;
 	padding: 6px 0 0px 0;
 	//border: 2px solid;
   //border-color: "[theme:white, default:#ffffff]";
@@ -112,4 +112,94 @@
 
 .thumbnailFieldButtons {
   display: flex;
+}
+
+.validationErrorDialog {
+  :global {
+    .ms-Dialog-main {
+      max-width: 540px;
+      width: 540px;
+    }
+  }
+
+  .actions {
+    position: relative;
+    width: 100%;
+    min-height: 24px;
+    line-height: 24px;
+    margin-top: 20px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    font-size: 0px;
+
+    .actionsRight {
+      text-align: right;
+      margin-right: -4px;
+      font-size: 0px;
+
+      .action {
+        margin-top: 0px;
+        margin-right: 4px;
+        margin-bottom: 0px;
+        margin-left: 4px;
+      }
+    }
+  }
+}
+
+.selectedFileContainer {
+	display: flex;
+	margin: 10px 0px;
+}
+
+h2.sectionTitle {
+	color: #000000;
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    clear: both;
+}
+.sectionFormFields {
+	display: flex;
+    flex-wrap: wrap;
+}
+.sectionFormField {
+	@media (max-width: 1920px) {
+		min-width: 244px;
+		max-width: 244px;
+	}
+	@media (max-width: 1366px) {
+		min-width: 248px;
+    	max-width: 248px;
+		margin-right: 44px;
+	}
+	@media (max-width: 1024px) {
+		min-width: 272px;
+    	max-width: 272px;
+	}
+	@media (max-width: 640px) {
+		min-width: 432px;
+    	max-width: 432px;
+	}
+	@media (max-width: 480px) {
+		width: 90%;
+	}
+}
+.sectionLine {
+	width: 100%;
+    border-top: 1px solid #edebe9;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    clear: both;
+}
+
+:global {
+	.sp-field-customFormatter {
+		min-height: inherit;
+		display: flex;
+		align-items: center;
+	}
 }

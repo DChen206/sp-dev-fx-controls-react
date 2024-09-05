@@ -7,7 +7,7 @@ export declare class LocationPicker extends React.Component<ILocationPickerProps
     * Constructor method
     */
     constructor(props: ILocationPickerProps);
-    componentWillReceiveProps(nextProps: ILocationPickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ILocationPickerProps): void;
     /**
     * Renders the LocationPicker controls with Office UI Fabric
     */

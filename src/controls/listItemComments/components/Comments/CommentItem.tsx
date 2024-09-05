@@ -2,9 +2,9 @@ import * as React from "react";
 import { ReactNode, useMemo } from "react";
 import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
-import { ActivityItem } from "office-ui-fabric-react/lib/ActivityItem";
-import { Text } from "office-ui-fabric-react/lib/Text";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
+import { ActivityItem } from "@fluentui/react/lib/ActivityItem";
+import { Text } from "@fluentui/react/lib/Text";
+import { Stack } from "@fluentui/react/lib/Stack";
 import { IComment } from "./IComment";
 import { CommentText } from "./CommentText";
 import { isEmpty } from "lodash";
@@ -39,7 +39,7 @@ export const CommentItem: React.FunctionComponent<IRenderNotificationItemProps> 
           activityPersonas={[{ imageUrl: `${PHOTO_URL}${author.email}` }]}
           activityDescription={activityDescription}
           timeStamp={format(parseISO(createdDate), "PPpp")}
-        ></ActivityItem>
+        />
       </Stack>
     </>
   );

@@ -1,3 +1,4 @@
+import { IBasePickerStyles } from '@fluentui/react';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 export interface IListItemPickerProps {
     columnInternalName: string;
@@ -27,5 +28,6 @@ export interface IListItemPickerProps {
      * Enable default suggestions. All options are displayed by default when clicking on the control
      */
     enableDefaultSuggestions?: boolean;
+    styles?: IBasePickerStyles;
 }
 //# sourceMappingURL=IListItemPickerProps.d.ts.map

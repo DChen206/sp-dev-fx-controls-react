@@ -1,12 +1,13 @@
 import * as React from 'react';
 import 'react-quill/dist/quill.snow.css';
-import { Quill } from 'react-quill';
+import type { Quill } from 'quill';
 import { IRichTextProps, IRichTextState } from './RichText.types';
 export declare class RichText extends React.Component<IRichTextProps, IRichTextState> {
     private _quillElem;
     private _wrapperRef;
     private _propertyPaneRef;
     private _toolbarId;
+    private _richTextId;
     private ddStyleOpts;
     private ddAlignOpts;
     private ddListOpts;
@@ -37,7 +38,7 @@ export declare class RichText extends React.Component<IRichTextProps, IRichTextS
      * @param nextState
      */
     shouldComponentUpdate(nextProps: IRichTextProps, nextState: IRichTextState): boolean;
-    componentWillReceiveProps(nextProps: IRichTextProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IRichTextProps): void;
     /**
      * Returns a handle to the Quill editor
      */
@@ -183,5 +184,9 @@ export declare class RichText extends React.Component<IRichTextProps, IRichTextS
      * Links to the property pane element
      */
     private linkPropertyPane;
+    /**
+     * Renders the label above the rich text (if specified)
+     */
+    private onRenderLabel;
 }
 //# sourceMappingURL=RichText.d.ts.map

@@ -26,12 +26,12 @@ export default class AccordionStore {
         allowMultipleExpanded?: boolean;
         allowZeroExpanded?: boolean;
     });
-    readonly toggleExpanded: (uuid: string) => AccordionStore;
-    readonly isItemDisabled: (uuid: string) => boolean;
-    readonly isItemExpanded: (uuid: string) => boolean;
-    readonly getPanelAttributes: (uuid: string, dangerouslySetExpanded?: boolean) => InjectedPanelAttributes;
+    readonly toggleExpanded: (uuid: UUID) => AccordionStore;
+    readonly isItemDisabled: (uuid: UUID) => boolean;
+    readonly isItemExpanded: (uuid: UUID) => boolean;
+    readonly getPanelAttributes: (uuid: UUID, dangerouslySetExpanded?: boolean) => InjectedPanelAttributes;
     readonly getHeadingAttributes: () => InjectedHeadingAttributes;
-    readonly getButtonAttributes: (uuid: string, dangerouslySetExpanded?: boolean) => InjectedButtonAttributes;
+    readonly getButtonAttributes: (uuid: UUID, dangerouslySetExpanded?: boolean) => InjectedButtonAttributes;
     private readonly getPanelId;
     private readonly getButtonId;
     private readonly augment;

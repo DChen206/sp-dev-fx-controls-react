@@ -15,7 +15,7 @@ export default class Term extends React.Component<ITermProps, ITermState> {
      * @param nextProps
      * @param nextContext
      */
-    componentWillReceiveProps?(nextProps: ITermProps, nextContext: any): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ITermProps, nextContext: any): void;
     /**
      * Get the right class name for the term
      */

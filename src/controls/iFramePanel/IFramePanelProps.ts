@@ -1,4 +1,4 @@
-import { IPanelProps } from "office-ui-fabric-react/lib/Panel";
+import { IPanelProps } from "@fluentui/react/lib/Panel";
 
 export interface IIFramePanelProps extends IPanelProps {
   /**
@@ -17,7 +17,7 @@ export interface IIFramePanelProps extends IPanelProps {
   /**
    * iframe's onload event handler
    */
-  iframeOnLoad?: (iframe: any) => void;
+  iframeOnLoad?: (iframe: HTMLIFrameElement) => void;
   /**
    * Specifies if transparency is allowed in iframe
    */

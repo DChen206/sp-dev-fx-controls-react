@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { IIconPickerProps } from '.';
-import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { IRenderFunction, getId } from 'office-ui-fabric-react/lib/Utilities';
+import { IIconPickerProps } from './IIconPickerProps';
+import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';
+import { Icon } from '@fluentui/react/lib/Icon';
+import { SearchBox } from '@fluentui/react/lib/SearchBox';
+import { IRenderFunction, getId } from '@fluentui/react/lib/Utilities';
 import styles from './IconPicker.module.scss';
 import * as strings from 'ControlStrings';
-import { Panel, PanelType, IPanelProps } from 'office-ui-fabric-react/lib/Panel';
+import { Panel, PanelType, IPanelProps } from '@fluentui/react/lib/Panel';
 import debounce from 'lodash/debounce';
 import { IIconPickerState } from './IIconPickerState';
 import * as telemetry from '../../common/telemetry';
-import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { FluentIconsService } from '../../services/FluentIconsService';
 
 export class IconPicker extends React.Component<IIconPickerProps, IIconPickerState> {
@@ -107,6 +107,9 @@ export class IconPicker extends React.Component<IIconPickerProps, IIconPickerSta
   }
 
   private closePanel = (): void => {
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
     this.setState({
       currentIcon: this.props.currentIcon,
       isPanelOpen: false
@@ -166,11 +169,11 @@ export class IconPicker extends React.Component<IIconPickerProps, IIconPickerSta
         data-automation-id={`icon-picker-search`}
         onSearch={debounce(this.onChange, 300)}
         onChange={debounce((e, value) => this.onChange(value), 300)} />
-      <div className={styles.closeBtnContainer}>{defaultRender!(props)}</div>
+      <div className={styles.closeBtnContainer}>{defaultRender(props)}</div>
     </div>;
   }
 
-  private renderPanelContent = () => {
+  private renderPanelContent = (): JSX.Element => {
     return <div>
       {this.renderIcons()}
     </div>;
@@ -198,7 +201,7 @@ export class IconPicker extends React.Component<IIconPickerProps, IIconPickerSta
     return <li className={styles.iconItem}>
       <input type="radio" name={this.radioIdBase} id={radioId} className={styles.iconRadio}
         data-automation-id={`icon-picker-${item}`}
-        checked={item == this.state.currentIcon}
+        checked={item === this.state.currentIcon}
         onChange={() => this.iconOnClick(item)} />
       <label className={styles.iconLabel} htmlFor={radioId} title={item}>
         <Icon iconName={item} className={styles.iconGlyph} />

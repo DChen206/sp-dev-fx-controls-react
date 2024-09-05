@@ -8,7 +8,6 @@ export default class SiteFilePickerTab extends React.Component<ISiteFilePickerTa
     private parseBreadcrumbsFromPaths;
     componentDidMount(): void;
     render(): React.ReactElement<ISiteFilePickerTabProps>;
-    private renderBreadcrumbItem;
     /**
      * Handles breadcrump item click
      */

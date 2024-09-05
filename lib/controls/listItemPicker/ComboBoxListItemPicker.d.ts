@@ -1,12 +1,13 @@
 import * as React from "react";
-import { IComboBoxListItemPickerProps, IComboBoxListItemPickerState } from ".";
+import { IComboBoxListItemPickerProps } from "./IComboBoxListItemPickerProps";
+import { IComboBoxListItemPickerState } from "./IComboBoxListItemPickerState";
 export declare class ComboBoxListItemPicker extends React.Component<IComboBoxListItemPickerProps, IComboBoxListItemPickerState> {
     private _listItemRepo;
     private _options;
     constructor(props: IComboBoxListItemPickerProps);
     componentDidMount(): void;
     protected loadOptions(props: IComboBoxListItemPickerProps, isInitialLoad?: boolean): Promise<void>;
-    componentWillReceiveProps(nextProps: IComboBoxListItemPickerProps): Promise<void>;
+    UNSAFE_componentWillReceiveProps(nextProps: IComboBoxListItemPickerProps): Promise<void>;
     private _getSelectedItems;
     /**
      * Render the field

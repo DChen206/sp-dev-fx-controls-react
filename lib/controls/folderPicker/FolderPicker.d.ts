@@ -4,7 +4,7 @@ export declare class FolderPicker extends React.Component<IFolderPickerProps, IF
     private _folderLinkId;
     private _selectedFolder;
     constructor(props: IFolderPickerProps);
-    componentWillReceiveProps(nextProps: IFolderPickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IFolderPickerProps): void;
     render(): React.ReactElement<IFolderPickerProps>;
     private _showPanel;
     private _hidePanel;

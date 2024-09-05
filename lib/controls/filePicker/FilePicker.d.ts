@@ -13,7 +13,7 @@ export declare class FilePicker extends React.Component<IFilePickerProps, IFileP
    *
    * @param nextProps
    */
-    componentWillReceiveProps(nextProps: IFilePickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IFilePickerProps): void;
     render(): JSX.Element;
     /**
      * Renders the panel header

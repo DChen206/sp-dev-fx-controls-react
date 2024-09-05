@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { IMapProps, IMapState } from '.';
+import { IMapProps } from './IMapProps';
+import { IMapState } from './IMapState';
 /**
  * Maps control
  */
 export declare class Map extends React.Component<IMapProps, IMapState> {
     constructor(props: IMapProps);
     /**
-     * componentWillMount lifecycle hook
-     */
-    /**
      * componentWillUpdate lifecycle hook
      */
-    componentWillUpdate(nextProps: IMapProps, nextState: IMapState): void;
+    UNSAFE_componentWillUpdate(nextProps: IMapProps, nextState: IMapState): void;
     /**
     * Get the dif value based on zoom supplied (dif is for calculating the 4 corners of the map)
     */

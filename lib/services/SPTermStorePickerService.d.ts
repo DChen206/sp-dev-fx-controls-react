@@ -79,18 +79,6 @@ export default class SPTermStorePickerService {
      * @param guid
      */
     cleanGuid(guid: string): string;
-    /**
-     * Returns 3 fake SharePoint lists for the Mock mode
-     */
-    private getTermStoresFromMock;
-    /**
-     * Returns 3 fake SharePoint lists for the Mock mode
-     */
-    private getAllMockTerms;
-    /**
-     * Returns 3 fake SharePoint lists for the Mock mode
-     */
-    private getAllMockTermsByAnchor;
     private convertTermToPickerTerm;
     private convertSuggestTermToPickerTerm;
 }

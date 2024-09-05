@@ -71,6 +71,10 @@ export interface ITerm {
     LocalCustomProperties?: {
         [property: string]: any;
     };
+    Parent?: {
+        Id: string;
+        CustomSortOrder?: string;
+    };
 }
 export interface ISuggestTerm {
     Id: string;

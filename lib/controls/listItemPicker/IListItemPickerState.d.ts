@@ -6,5 +6,6 @@ export interface IListItemPickerState {
     suggestionsHeaderText: string;
     selectedItems?: any[];
     field?: ISPField;
+    safeListId: string;
 }
 //# sourceMappingURL=IListItemPickerState.d.ts.map

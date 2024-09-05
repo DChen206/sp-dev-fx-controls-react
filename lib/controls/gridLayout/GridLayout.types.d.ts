@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { ISize } from 'office-ui-fabric-react/lib/Utilities';
-import { IListProps } from 'office-ui-fabric-react/lib/List';
+import { ISize } from '@fluentui/react/lib/Utilities';
+import { IListProps } from '@fluentui/react/lib/List';
 export interface IGridLayoutProps {
     /**
      * The array of items to display.

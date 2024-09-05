@@ -27,8 +27,8 @@ export declare class TaxonomyPicker extends React.Component<ITaxonomyPickerProps
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
-    componentWillReceiveProps(nextProps: ITaxonomyPickerProps): void;
+    UNSAFE_componentWillMount(): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ITaxonomyPickerProps): void;
     /**
     * it checks, if all entries still exist in term store. if allowMultipleSelections is true. it have to validate all values
     */

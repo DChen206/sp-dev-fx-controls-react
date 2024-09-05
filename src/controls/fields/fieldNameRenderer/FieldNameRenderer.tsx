@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { Link } from 'office-ui-fabric-react/lib/Link';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Icon } from '@fluentui/react/lib/Icon';
+import { Link } from '@fluentui/react/lib/Link';
 
 import { FieldBaseTextRenderer } from '../fieldBaseTextRenderer/FieldBaseTextRenderer';
 import { IFieldRendererProps } from '../fieldCommon/IFieldRendererProps';
@@ -77,20 +77,20 @@ export class FieldNameRenderer extends React.Component<IFieldNameRendererProps, 
         this._onDoubleClick = this._onDoubleClick.bind(this);
     }
 
-    public componentDidMount() {
+    public componentDidMount(): void {
         //
         // small hack for double click.
         // unfortunately, we can't use React onDoubleClick because React doesn't guaranty the sequence of handlers.
         // And stopPropagation could not make effect.
         //
         if (this.props.onDoubleClick && this.props.isLink) {
-            const domNode = ReactDOM.findDOMNode(this) as HTMLElement;
+            const domNode = ReactDOM.findDOMNode(this) as HTMLElement; // eslint-disable-line react/no-find-dom-node
             this._button = domNode.querySelector('button');
             this._button.addEventListener('dblclick', this._onDoubleClick, false);
         }
     }
 
-    public componentWillUnmount() {
+    public componentWillUnmount(): void {
         if (this._button) {
             this._button.removeEventListener('dblclick', this._onDoubleClick);
         }
@@ -101,7 +101,7 @@ export class FieldNameRenderer extends React.Component<IFieldNameRendererProps, 
         //
         // for now only signal for New documents is implemented
         //
-        let signal: JSX.Element = this.props.isNew ? <span className={css(styles.signal, styles.newItem)}><Icon iconName={'Glimmer'} className={css(styles.newIcon)} /></span> : null;
+        const signal: JSX.Element = this.props.isNew ? <span className={css(styles.signal, styles.newItem)}><Icon iconName={'Glimmer'} className={css(styles.newIcon)} /></span> : null;
         let value: JSX.Element;
 
         if (isLink) {

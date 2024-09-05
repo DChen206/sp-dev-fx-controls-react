@@ -1,4 +1,4 @@
-import { DayOfWeek } from 'office-ui-fabric-react/lib/utilities/dateValues/DateValues';
+import { DayOfWeek, FirstWeekOfYear } from '@fluentui/react/lib/DateTimeUtilities';
 import { TimeConvention, DateConvention } from './DateTimeConventions';
 import { IDateTimePickerStrings } from './IDateTimePickerStrings';
 import { TimeDisplayControlType } from './TimeDisplayControlType';
@@ -25,6 +25,10 @@ export interface IDateTimePickerProps {
    */
   formatDate?: (date: Date) => string;
   /**
+  * Optional method to parse the text input value to date, it is only useful when allowTextInput is set to true
+  */
+  parseDateFromString?: (dateStr: string) => Date;
+  /**
    * Defines the date convention to use. The default is date and time.
    */
   dateConvention?: DateConvention;
@@ -36,6 +40,10 @@ export interface IDateTimePickerProps {
    * Specify the first day of the week for your locale.
    */
   firstDayOfWeek?: DayOfWeek;
+  /**
+  * Defines when the first week of the year should start, FirstWeekOfYear.FirstDay, FirstWeekOfYear.FirstFullWeek or FirstWeekOfYear.FirstFourDayWeek are the possible values
+  */
+  firstWeekOfYear?: FirstWeekOfYear
   /**
    * An UNIQUE key indicates the identity of this control
    */
@@ -59,6 +67,11 @@ export interface IDateTimePickerProps {
    * Default value is 200.
    */
   deferredValidationTime?: number;
+  /**
+   * Whether the user is allowed to enter a date as text instead of picking one from the date picker.
+   * @defaultvalue false
+   */
+  allowTextInput?: boolean;
   /**
    * Whether the "Go to today" link should be shown or not
    */
@@ -85,7 +98,7 @@ export interface IDateTimePickerProps {
   /**
    * Callback issued when date/time is changed
    */
-  onChange?: (date: Date | null | undefined) => void;
+  onChange?: (date: Date | undefined) => void;
   /*
    * Localized strings to use in the DateTimePicker.
    */
@@ -111,9 +124,13 @@ export interface IDateTimePickerProps {
   placeholder?: string;
 
   /**
+   * The initial selected date
+   */
+  initialPickerDate?: Date;
+
+  /**
    * The minimum allowable date for the DatePicker
    */
-
   minDate?: Date;
 
   /**
@@ -126,4 +143,14 @@ export interface IDateTimePickerProps {
    * Specifies minutes' increment step
    */
   minutesIncrementStep?: MinutesIncrement;
+
+  /**
+    * Whether the clearDate iconbutton must be available when date is selected, default to false
+    */
+  showClearDate?: boolean;
+
+  /**
+   * Icon used for clearDate iconbutton. Defaults to RemoveEvent
+   */
+  showClearDateIcon?: string;
 }

@@ -18,7 +18,7 @@ export declare class ListView extends React.Component<IListViewProps, IListViewS
      * @param prevProps
      * @param prevState
      */
-    componentWillReceiveProps(nextProps: IListViewProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IListViewProps): void;
     /**
      * Select all the items that should be selected by default
      */

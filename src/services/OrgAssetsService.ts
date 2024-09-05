@@ -13,15 +13,27 @@ export class OrgAssetsService extends FileBrowserService {
   public getListItems = async (listUrl: string, folderPath: string, acceptedFilesExtensions?: string[], nextPageQueryStringParams?: string): Promise<FilesQueryResult> => {
     let filesQueryResult: FilesQueryResult = { items: [], nextHref: null };
     try {
+
       // Retrieve Lib path from folder path
-      if (folderPath.charAt(0) !== "/") {
-        folderPath = `/${folderPath}`;
+      const isRootSite = this.context.pageContext.site.serverRelativeUrl === '/';
+
+      if (!isRootSite) {
+        if (folderPath.charAt(0) !== '/') {
+          folderPath = `/${folderPath}`;
+        }
+
+      } else {
+        if (folderPath.charAt(0) === '/') {
+          folderPath = folderPath.substring(1);
+        }
       }
+
       // Remove all the rest of the folder path
-      let libName = folderPath.replace(`${this._orgAssetsLibraryServerRelativeSiteUrl}/`, "");
-      libName = libName.split("/")[0];
-      // Buil absolute library URL
-      const libFullUrl = this.buildAbsoluteUrl(`${this._orgAssetsLibraryServerRelativeSiteUrl}/${libName}`);
+      let libName = folderPath.replace(`${this._orgAssetsLibraryServerRelativeSiteUrl}/`, '');
+      libName = libName.split('/')[0];
+
+      // Build absolute library URL
+      const libFullUrl = this.buildAbsoluteUrl(!isRootSite ? `${this._orgAssetsLibraryServerRelativeSiteUrl}/${libName}` : `${this._orgAssetsLibraryServerRelativeSiteUrl}${libName}`);
 
       let queryStringParams: string = "";
       // Do not pass FolderServerRelativeUrl as query parameter
@@ -67,7 +79,7 @@ export class OrgAssetsService extends FileBrowserService {
     }
   }
 
-  private _parseOrgAssetsLibraryItem = (libItem: any) => {
+  private _parseOrgAssetsLibraryItem = (libItem: any): ILibrary => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const orgAssetsLibrary: ILibrary = {
       absoluteUrl: this.buildAbsoluteUrl(libItem.LibraryUrl.DecodedUrl),
       title: libItem.DisplayName,

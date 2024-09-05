@@ -1,4 +1,4 @@
-interface IBingSearchResult {
+export interface IBingSearchResult {
     webSearchUrl: string;
     webSearchUrlPingSuffix: string;
     name: string;
@@ -37,4 +37,5 @@ interface Thumbnail {
     width: number;
     height: number;
 }
+export {};
 //# sourceMappingURL=IBingSearchResult.d.ts.map

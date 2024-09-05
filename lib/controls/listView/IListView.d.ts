@@ -1,5 +1,5 @@
-import { SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
-import { IColumn, IGroup } from 'office-ui-fabric-react/lib/components/DetailsList';
+/// <reference types="react" />
+import { IColumn, IGroup, SelectionMode, IDetailsRowProps } from '@fluentui/react/lib/components/DetailsList';
 export { SelectionMode };
 export declare enum GroupOrder {
     ascending = 1,
@@ -65,6 +65,18 @@ export interface IListViewProps {
    * Set to false by default
    */
     stickyHeader?: boolean;
+    /**
+     * Callback to override the default row rendering.
+     */
+    onRenderRow?: (props: IDetailsRowProps) => JSX.Element | undefined;
+    /**
+    * Class name to apply additional styles on list view wrapper
+    */
+    className?: string;
+    /**
+     * Class name to apply additional styles on list view
+     */
+    listClassName?: string;
     /**
      * Custom sorting function.
      * @returns sorted collection of items

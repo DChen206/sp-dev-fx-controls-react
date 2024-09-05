@@ -7,29 +7,29 @@ export declare const LoadedViewFieldsKey: string;
  * Mapping between current field name and the name of the real field that contains the data
  */
 export declare const FieldNamesMapping: {
-    'Title': {
-        'storedName': string;
+    Title: {
+        storedName: string;
     };
-    'LinkTitle': {
-        'storedName': string;
+    LinkTitle: {
+        storedName: string;
     };
-    'LinkTitleNoMenu': {
-        'storedName': string;
+    LinkTitleNoMenu: {
+        storedName: string;
     };
-    'LinkFilename': {
-        'storedName': string;
+    LinkFilename: {
+        storedName: string;
     };
-    'LinkFileNameNoMenu': {
-        'storedName': string;
+    LinkFileNameNoMenu: {
+        storedName: string;
     };
-    'FileLeafRef': {
-        'storedName': string;
+    FileLeafRef: {
+        storedName: string;
     };
-    'URL': {
-        'storedName': string;
+    URL: {
+        storedName: string;
     };
-    'URLwMenu': {
-        'storedName': string;
+    URLwMenu: {
+        storedName: string;
     };
 };
 /**

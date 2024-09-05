@@ -7,15 +7,11 @@ export default class ButtonTreeItemAction extends React.Component<IConcreteTreeI
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * Prepares the command bar button
      */
     private prepareCommandBarButton;
-    /**
-     * Gets the action button styling
-     */
-    private getTreeItemActionButtonStyle;
     /**
      * Check if there are action to immediatly invoke
      */

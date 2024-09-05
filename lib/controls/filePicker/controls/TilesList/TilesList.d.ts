@@ -8,6 +8,7 @@ export declare class TilesList extends React.Component<ITilesListProps> {
     private _pageWidth;
     constructor(props: ITilesListProps);
     componentDidUpdate(prevProps: ITilesListProps): void;
+    componentDidMount(): void;
     render(): React.ReactElement<ITilesListProps>;
     /**
     * Gets called what a file is selected.

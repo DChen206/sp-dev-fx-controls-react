@@ -25,7 +25,7 @@ export interface IGetListDataAsStreamResult {
     HttpRoot: string;
     NoScriptEnabled: boolean;
     imagesPath: string;
-    PortalUrl: null;
+    PortalUrl: undefined;
     SendToLocationName: string;
     SendToLocationUrl: string;
     RecycleBinEnabled: number;

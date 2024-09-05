@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { BasePicker, IBasePickerProps, IPickerItemProps } from 'office-ui-fabric-react/lib/Pickers';
+import { BasePicker, IBasePickerProps, IPickerItemProps } from '@fluentui/react/lib/Pickers';
 import { IPickerTerm, IPickerTerms } from './ITermPicker';
 import { ITaxonomyPickerProps } from './ITaxonomyPicker';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
-import { Autofill } from 'office-ui-fabric-react/lib/components/Autofill/Autofill';
+import { Autofill } from '@fluentui/react/lib/components/Autofill/Autofill';
 import { LegacyRef } from 'react';
 export declare class TermBasePicker extends BasePicker<IPickerTerm, IBasePickerProps<IPickerTerm>> {
 }
@@ -33,11 +33,11 @@ export default class TermPicker extends React.Component<ITermPickerProps, ITermP
     /**
      * Constructor method
      */
-    constructor(props: any);
+    constructor(props: ITermPickerProps);
     /**
      * componentWillReceiveProps method
      */
-    componentWillReceiveProps(nextProps: ITermPickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ITermPickerProps): void;
     /**
      * Renders the item in the picker
      */

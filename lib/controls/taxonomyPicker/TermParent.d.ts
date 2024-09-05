@@ -10,7 +10,7 @@ export default class TermParent extends React.Component<ITermParentProps, ITermP
     /**
      * componentWillMount
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * Handle the click event: collapse or expand
      */

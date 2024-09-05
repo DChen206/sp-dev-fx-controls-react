@@ -4,7 +4,7 @@ export default class ButtonTermAction extends React.Component<IConcreteTermActio
     /**
      * componentWillMount lifecycle hook
      */
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     /**
      * Prepares the command bar button
      */

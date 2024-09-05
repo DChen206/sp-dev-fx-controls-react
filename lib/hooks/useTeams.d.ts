@@ -1,7 +1,7 @@
 import { ServiceScope } from "@microsoft/sp-core-library";
+import { ITeamMenber } from "../common/model/ITeamMember";
 import { ITeam } from "./../common/model/ITeam";
 import { ITeamChannel } from "./../common/model/ITeamChannel";
-import { ITeamMenber } from "../common/model/ITeamMember";
 export declare const useTeams: (serviceScope: ServiceScope) => {
     init: () => Promise<void>;
     getMyTeams: (filter?: string) => Promise<ITeam[]>;

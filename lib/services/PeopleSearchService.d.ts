@@ -1,5 +1,8 @@
 import { BaseComponentContext } from '@microsoft/sp-component-base';
-import { PrincipalType, IPeoplePickerUserItem } from "../PeoplePicker";
+import "@pnp/sp/site-users/web";
+import "@pnp/sp/sputilities";
+import "@pnp/sp/webs";
+import { IPeoplePickerUserItem, PrincipalType } from "../PeoplePicker";
 /**
  * Service implementation to search people in SharePoint
  */
@@ -33,19 +36,15 @@ export default class SPPeopleSearchService {
      * @param groupName
      * @param siteUrl
      */
-    getGroupId(groupName: string, siteUrl?: string): Promise<number | null>;
+    getGroupId(groupName: string, siteUrl?: string): Promise<number | undefined>;
     /**
      * Search person by its email or login name
      */
-    searchPersonByEmailOrLogin(email: string, principalTypes: PrincipalType[], siteUrl?: string, groupId?: number, ensureUser?: boolean): Promise<IPeoplePickerUserItem>;
+    searchPersonByEmailOrLogin(email: string, principalTypes: PrincipalType[], siteUrl?: string, groupId?: number | string | (string | number)[], ensureUser?: boolean, allowUnvalidated?: boolean): Promise<IPeoplePickerUserItem>;
     /**
      * Search All Users from the SharePoint People database
      */
-    searchPeople(query: string, maximumSuggestions: number, principalTypes: PrincipalType[], siteUrl?: string, groupId?: number, ensureUser?: boolean): Promise<IPeoplePickerUserItem[]>;
-    /**
-     * Local site search
-     */
-    private localSearch;
+    searchPeople(query: string, maximumSuggestions: number, principalTypes: PrincipalType[], siteUrl?: string, groupId?: number | string | (string | number)[], ensureUser?: boolean, allowUnvalidated?: boolean): Promise<IPeoplePickerUserItem[]>;
     /**
      * Tenant search
      */
@@ -54,19 +53,12 @@ export default class SPPeopleSearchService {
      * Retrieves the local user ID
      *
      * @param userId
+     * @param siteUrl
      */
     private ensureUser;
     /**
      * Generates Initials from a full name
      */
     private getFullNameInitials;
-    /**
-     * Gets the user photo url
-     */
-    private getUserPhotoUrl;
-    /**
-     * Returns fake people results for the Mock mode
-     */
-    private searchPeopleFromMock;
 }
 //# sourceMappingURL=PeopleSearchService.d.ts.map

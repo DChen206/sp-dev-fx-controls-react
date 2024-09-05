@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ICollectionDataItemProps, ICollectionDataItemState } from '.';
+import { ICollectionDataItemProps } from './ICollectionDataItemProps';
+import { ICollectionDataItemState } from './ICollectionDataItemState';
 export declare class CollectionDataItem extends React.Component<ICollectionDataItemProps, ICollectionDataItemState> {
     private emptyItem;
     private validation;
@@ -15,6 +16,8 @@ export declare class CollectionDataItem extends React.Component<ICollectionDataI
      * Update the item value on the field change
      */
     private onValueChanged;
+    private onValueChangedComboBoxSingle;
+    private onValueChangedComboBoxMulti;
     /**
      * Perform all required field checks at once
      */
@@ -67,6 +70,8 @@ export declare class CollectionDataItem extends React.Component<ICollectionDataI
      * @param item
      */
     private urlFieldValidation;
+    private peoplepickerValidation;
+    private comboboxValidation;
     /**
      * Error callout message handler
      *

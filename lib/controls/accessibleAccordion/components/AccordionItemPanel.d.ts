@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import "../css/AccordionStylesOverride.css";
 import { DivAttributes } from "../helpers/types";
 declare type Props = DivAttributes & {
     className?: string;

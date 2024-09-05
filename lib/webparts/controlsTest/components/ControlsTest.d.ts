@@ -1,11 +1,16 @@
 import * as React from "react";
-import { IControlsTestProps, IControlsTestState } from "./IControlsTestProps";
+import { IControlsTestProps } from "./IControlsTestProps";
+import { IControlsTestState } from "./IControlsTestState";
 /**
  * Component that can be used to test out the React controls from this project
  */
 export default class ControlsTest extends React.Component<IControlsTestProps, IControlsTestState> {
     private taxService;
+    private spTaxonomyService;
+    private serviceScope;
     private richTextValue;
+    private theme;
+    private pickerStylesSingle;
     private onSelectedChannel;
     /**
      * Static array for carousel control example.
@@ -17,7 +22,7 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
     /**
      * React componentDidMount lifecycle hook
      */
-    componentDidMount(): void;
+    componentDidMount(): Promise<void>;
     /**
      * Event handler when changing the icon size in the dropdown
      * @param element
@@ -61,6 +66,11 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
      */
     private onListPickerChange;
     /**
+     * Selected View change event
+     * @param views
+     */
+    private onViewPickerChange;
+    /**
      * Deletes second item from the list
      */
     private deleteItem;
@@ -80,8 +90,11 @@ export default class ControlsTest extends React.Component<IControlsTestProps, IC
      */
     private triggerNextElement;
     private _onFilePickerSave;
+    private onToolbarSelectedFiltersChange;
+    private toggleToolbarFilter;
     private rootFolder;
     private _onFolderSelect;
+    private _onFileClick;
     private _onRenderGridItem;
     /**
      * Renders the component

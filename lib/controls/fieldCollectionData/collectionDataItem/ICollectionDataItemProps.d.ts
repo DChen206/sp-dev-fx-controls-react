@@ -1,4 +1,5 @@
-import { ICustomCollectionField } from "..";
+import { BaseComponentContext } from "@microsoft/sp-component-base";
+import { ICustomCollectionField } from "../ICustomCollectionField";
 export interface ICollectionDataItemProps {
     fields: ICustomCollectionField[];
     index?: number;
@@ -6,6 +7,7 @@ export interface ICollectionDataItemProps {
     sortingEnabled?: boolean;
     totalItems?: number;
     disableItemDeletion?: boolean;
+    context?: BaseComponentContext;
     fAddItem?: (item: any) => void;
     fAddInCreation?: (item: any) => void;
     fUpdateItem?: (idx: number, item: any) => void;

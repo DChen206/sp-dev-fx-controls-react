@@ -16,7 +16,7 @@ export interface IOotbFieldsState {
  */
 export default class OotbFields extends React.Component<IOotbFieldsProps, IOotbFieldsState> {
     constructor(props: IOotbFieldsProps, state: IOotbFieldsState);
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     componentDidMount(): void;
     componentWillUnmount(): void;
     render(): React.ReactElement<{}>;

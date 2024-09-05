@@ -1,5 +1,4 @@
 /// <reference types="react" />
-import "../css/AccordionStylesOverride.css";
 import DisplayName from "../helpers/DisplayName";
 import { DivAttributes } from "../helpers/types";
 import { UUID } from "./ItemContext";

@@ -3,6 +3,6 @@ import { IRecentFile } from "../../../services/FilesSearchService.types";
 export interface IRecentFilesTabState {
     results: IRecentFile[];
     isLoading: boolean;
-    filePickerResult: IFilePickerResult;
+    filePickerResults: IFilePickerResult[];
 }
 //# sourceMappingURL=IRecentFilesTabState.d.ts.map

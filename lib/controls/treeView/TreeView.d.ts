@@ -6,6 +6,7 @@ import { ITreeViewState } from './ITreeViewState';
  */
 export declare class TreeView extends React.Component<ITreeViewProps, ITreeViewState> {
     private nodesToExpand;
+    private divToInjectCssVariables;
     /**
      * Constructor method
      * @param props properties interface
@@ -36,7 +37,7 @@ export declare class TreeView extends React.Component<ITreeViewProps, ITreeViewS
     private handleOnSelect;
     private checkIfChildrenShouldBeSelected;
     componentDidMount(): void;
-    componentWillReceiveProps(nextProps: ITreeViewProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: ITreeViewProps): void;
     /**
      * Default React render method
      */

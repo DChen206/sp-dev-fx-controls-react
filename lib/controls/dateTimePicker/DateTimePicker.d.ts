@@ -1,5 +1,6 @@
 import * as React from "react";
-import { IDateTimePickerProps, IDateTimePickerState } from ".";
+import { IDateTimePickerProps } from "./IDateTimePickerProps";
+import { IDateTimePickerState } from "./IDateTimePickerState";
 /**
  * Renders the controls for DateTimePicker component
  */
@@ -18,7 +19,7 @@ export declare class DateTimePicker extends React.Component<IDateTimePickerProps
     /**
      * Called before the component receives new props, used for matching state with new props.
      */
-    componentWillReceiveProps(nextProps: IDateTimePickerProps): void;
+    UNSAFE_componentWillReceiveProps(nextProps: IDateTimePickerProps): void;
     /**
      * Get the components of a Date object matching the DateConvention settings
      * @param date Date to extract components from
@@ -29,6 +30,10 @@ export declare class DateTimePicker extends React.Component<IDateTimePickerProps
      * Function called when the DatePicker Office UI Fabric component selected date changed
      */
     private onSelectDate;
+    /**
+     * Function called from the clearDate iconbutton
+     */
+    private clearDate;
     /**
      * Function called when hours value have been changed
      * @param element Hours dropdown value

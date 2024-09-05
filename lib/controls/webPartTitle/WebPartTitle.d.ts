@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { DisplayMode } from '@microsoft/sp-core-library';
+import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 export interface IWebPartTitleProps {
     displayMode: DisplayMode;
     title: string;
     updateProperty: (value: string) => void;
     className?: string;
     placeholder?: string;
-    moreLink?: JSX.Element | Function;
-    themeVariant?: any;
+    moreLink?: JSX.Element | (() => React.ReactNode);
+    themeVariant?: IReadonlyTheme;
 }
 /**
  * Web Part Title component

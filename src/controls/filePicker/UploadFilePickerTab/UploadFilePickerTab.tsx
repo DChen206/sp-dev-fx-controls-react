@@ -4,8 +4,8 @@ import { IUploadFilePickerTabProps } from './IUploadFilePickerTabProps';
 import { IUploadFilePickerTabState } from './IUploadFilePickerTabState';
 import { IFilePickerResult } from '../FilePicker.types';
 import { GeneralHelper } from '../../../common/utilities/GeneralHelper';
-import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/components/Button';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
+import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/components/Button';
+import { css } from '@fluentui/react/lib/Utilities';
 
 import * as strings from 'ControlStrings';
 import styles from './UploadFilePickerTab.module.scss';
@@ -85,13 +85,13 @@ export default class UploadFilePickerTab extends React.Component<IUploadFilePick
   /**
    * Gets called when a file is uploaded
    */
-  private _handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  private _handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!event.target.files || event.target.files.length < 1) {
       return;
     }
 
     // Get the files that were uploaded
-    let files = event.target.files;
+    const files = event.target.files;
 
     // Grab the first file -- there should always only be one
     const file: File = files[0];
@@ -119,14 +119,14 @@ export default class UploadFilePickerTab extends React.Component<IUploadFilePick
   /**
    * Saves base64 encoded image back to property pane file picker
    */
-  private _handleSave = () => {
+  private _handleSave = (): void => {
     this.props.onSave([this.state.filePickerResult]);
   }
 
   /**
    * Closes tab without saving
    */
-  private _handleClose = () => {
+  private _handleClose = (): void => {
     this.props.onClose();
   }
 }

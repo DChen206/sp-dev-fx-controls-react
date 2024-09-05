@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Icon, IIconProps } from 'office-ui-fabric-react/lib/Icon';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { Spinner, SpinnerSize } from "office-ui-fabric-react/lib/Spinner";
+import { Icon, IIconProps } from '@fluentui/react/lib/Icon';
+import { IconButton } from '@fluentui/react/lib/Button';
+import { TextField } from '@fluentui/react/lib/TextField';
+import { Spinner, SpinnerSize } from "@fluentui/react/lib/Spinner";
 import styles from './NewFolder.module.scss';
 import * as strings from 'ControlStrings';
 import { INewFolderProps, INewFolderState } from '.';
@@ -47,7 +47,7 @@ export class NewFolder extends React.Component<INewFolderProps, INewFolderState>
           }} /></span>
         }
         {!this.state.loading &&
-          <Icon iconName="FabricNewFolder" className={styles.folderIcon}></Icon>
+          <Icon iconName="FabricNewFolder" className={styles.folderIcon} />
         }
         {!this.state.showInput &&
           <div className={styles.defaultText} onClick={this._onShowInputChange}>New folder</div>
@@ -82,11 +82,11 @@ export class NewFolder extends React.Component<INewFolderProps, INewFolderState>
     );
   }
 
-  private _onFolderNameChange = (newValue?: string) => {
+  private _onFolderNameChange = (newValue?: string): void => {
     this.setState({ folderName: newValue || '', errorMessage: '' });
   }
 
-  private _onShowInputChange = (event: React.MouseEvent<HTMLDivElement>) => {
+  private _onShowInputChange = (event: React.MouseEvent<HTMLDivElement>): void => {
     this.setState({ showInput: true });
   }
 
@@ -122,6 +122,6 @@ export class NewFolder extends React.Component<INewFolderProps, INewFolderState>
     }
 
     // callback
-    this.props.addSubFolder(newFolder);
+    this.props.addSubFolder(newFolder).then(() => { /* no-op; */}).catch(() => { /* no-op; */ });
   }
 }

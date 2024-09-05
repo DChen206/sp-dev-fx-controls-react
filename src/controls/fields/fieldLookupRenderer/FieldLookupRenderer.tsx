@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { css } from 'office-ui-fabric-react/lib/Utilities';
-import { Dialog, DialogType } from 'office-ui-fabric-react/lib/Dialog';
-import { Link } from 'office-ui-fabric-react/lib/Link';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { css } from '@fluentui/react/lib/Utilities';
+import { Dialog, DialogType } from '@fluentui/react/lib/Dialog';
+import { Link } from '@fluentui/react/lib/Link';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 
 import { ISPFieldLookupValue } from "../../../common/SPEntities";
 import { IFieldRendererProps } from '../fieldCommon/IFieldRendererProps';
@@ -78,7 +78,7 @@ export class FieldLookupRenderer extends React.Component<IFieldLookupRendererPro
 
     public render(): JSX.Element {
         const lookupLinks: JSX.Element[] = this.props.lookups.map((lookup) => {
-            return <Link onClick={this._onClick.bind(this, lookup)} className={styles.lookup} style={this.props.cssProps}>{lookup.lookupValue}</Link>;
+            return <Link key={lookup.lookupId} onClick={this._onClick.bind(this, lookup)} className={styles.lookup} style={this.props.cssProps}>{lookup.lookupValue}</Link>;
         });
         return (
             <div style={this.props.cssProps} className={css(this.props.className)}>{lookupLinks}
@@ -148,11 +148,14 @@ export class FieldLookupRenderer extends React.Component<IFieldLookupRendererPro
                         lookupDispFormUrl: `${listDispFormUrl}&ID=${lookup.lookupId}&RootFolder=*&IsDlg=1`
                     };
                 });
+            })
+            .catch(() => {
+              // no-op;
             });
         }
     }
 
-    private _onIframeLoaded(iframe: any): void {
+    private _onIframeLoaded(iframe: HTMLIFrameElement): void {
         //
         // some additional configuration to beutify content of the iframe
         //

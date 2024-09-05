@@ -1,4 +1,4 @@
-import { IBreadcrumbItem } from 'office-ui-fabric-react/lib/Breadcrumb';
+import { IBreadcrumbItem } from '@fluentui/react/lib/Breadcrumb';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 
 export interface ISiteBreadcrumbProps {
@@ -16,5 +16,5 @@ export interface IWebInfo {
   Id: string;
   Title: string;
   ServerRelativeUrl: string;
-  error?: any;
+  error?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
